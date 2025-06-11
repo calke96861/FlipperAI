@@ -570,14 +570,53 @@ function App() {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900 flex items-center">
               <DollarSign className="h-6 w-6 mr-2" />
-              Deal Opportunities
+              Deal Opportunities ({processedVehicles.length})
             </h2>
-            <button
-              onClick={loadDeals}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
-            >
-              Refresh Deals
-            </button>
+            <div className="flex items-center space-x-4">
+              {/* Sort Dropdown */}
+              <select
+                value={`${sortBy}-${sortOrder}`}
+                onChange={(e) => {
+                  const [field, order] = e.target.value.split('-');
+                  setSortBy(field);
+                  setSortOrder(order);
+                }}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              >
+                <option value="flip_score-desc">🎯 Best Flip Score</option>
+                <option value="est_profit-desc">💰 Highest Profit</option>
+                <option value="roi_percent-desc">📈 Highest ROI</option>
+                <option value="asking_price-asc">💵 Lowest Price</option>
+                <option value="asking_price-desc">💎 Highest Price</option>
+                <option value="year-desc">⚡ Newest Year</option>
+                <option value="year-asc">🏛️ Oldest Year</option>
+                <option value="mileage-asc">🏃 Lowest Mileage</option>
+                <option value="mileage-desc">🛣️ Highest Mileage</option>
+              </select>
+              
+              {/* View Toggle */}
+              <div className="flex border border-gray-300 rounded-lg">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`px-3 py-2 text-sm ${viewMode === "grid" ? "bg-blue-600 text-white" : "bg-white text-gray-700"} rounded-l-lg transition-colors`}
+                >
+                  Grid
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`px-3 py-2 text-sm ${viewMode === "list" ? "bg-blue-600 text-white" : "bg-white text-gray-700"} rounded-r-lg transition-colors`}
+                >
+                  List
+                </button>
+              </div>
+              
+              <button
+                onClick={loadDeals}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+              >
+                Refresh Deals
+              </button>
+            </div>
           </div>
 
           {loading ? (
