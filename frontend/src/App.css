@@ -1,38 +1,153 @@
+/* Custom styles for FlipBot AI */
+
 .App {
-    text-align: center;
+  text-align: left;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Loading animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+/* Smooth transitions */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
-.App-link {
-    color: #61dafb;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Button hover effects */
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Card hover effects */
+.bg-white:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom focus styles */
+input:focus, select:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+/* Gradient backgrounds for profit indicators */
+.profit-positive {
+  background: linear-gradient(135deg, #10b981, #34d399);
+}
+
+.profit-negative {
+  background: linear-gradient(135deg, #ef4444, #fb7185);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .lg\\:grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .lg\\:grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+/* Status indicators */
+.status-new {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-watching {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-contacted {
+  background-color: #e0e7ff;
+  color: #5b21b6;
+}
+
+.status-negotiating {
+  background-color: #fed7aa;
+  color: #c2410c;
+}
+
+.status-purchased {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-passed {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+/* Flip score indicators */
+.flip-score-high {
+  color: #059669;
+  font-weight: bold;
+}
+
+.flip-score-medium {
+  color: #d97706;
+  font-weight: bold;
+}
+
+.flip-score-low {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+/* ROI indicators */
+.roi-excellent {
+  color: #065f46;
+  background-color: #d1fae5;
+}
+
+.roi-good {
+  color: #166534;
+  background-color: #dcfce7;
+}
+
+.roi-fair {
+  color: #ca8a04;
+  background-color: #fef3c7;
+}
+
+.roi-poor {
+  color: #dc2626;
+  background-color: #fee2e2;
 }
