@@ -457,7 +457,55 @@ function App() {
             </div>
           )}
 
-          {/* Filters */}
+          {/* Quick Filter Buttons */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            <button
+              onClick={() => {
+                setSortBy("est_profit");
+                setSortOrder("desc");
+              }}
+              className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm hover:bg-green-200 transition-colors"
+            >
+              💰 High Profit
+            </button>
+            <button
+              onClick={() => {
+                setSortBy("roi_percent");
+                setSortOrder("desc");
+              }}
+              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200 transition-colors"
+            >
+              📈 High ROI
+            </button>
+            <button
+              onClick={() => {
+                setFilters({...filters, priceMax: "50000"});
+              }}
+              className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition-colors"
+            >
+              💵 Under $50K
+            </button>
+            <button
+              onClick={() => {
+                setSortBy("mileage");
+                setSortOrder("asc");
+              }}
+              className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm hover:bg-orange-200 transition-colors"
+            >
+              🏃 Low Mileage
+            </button>
+            <button
+              onClick={() => {
+                setSortBy("year");
+                setSortOrder("desc");
+              }}
+              className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm hover:bg-gray-200 transition-colors"
+            >
+              ⚡ Newest
+            </button>
+          </div>
+
+          {/* Advanced Filters */}
           {showFilters && (
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-4 p-4 bg-gray-50 rounded-lg">
               <input
