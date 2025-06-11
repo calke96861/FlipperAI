@@ -496,6 +496,8 @@ function App() {
             <button
               onClick={() => {
                 setFilters({...filters, priceMax: "50000"});
+                // Force re-render by updating a dummy state
+                setTimeout(() => setFilters(prev => ({...prev})), 10);
               }}
               className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition-colors"
             >
