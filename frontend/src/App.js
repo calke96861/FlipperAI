@@ -76,6 +76,7 @@ function App() {
   const [sortOrder, setSortOrder] = useState("desc");
   const [viewMode, setViewMode] = useState("grid");
   const [savedVehicles, setSavedVehicles] = useState(new Set());
+  const [availableSources, setAvailableSources] = useState({});
 
   // Load initial data
   useEffect(() => {
