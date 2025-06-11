@@ -393,188 +393,184 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">FlipBot AI 🚗</h1>
-              <p className="text-gray-600">Premium Vehicle Resale Intelligence</p>
+              <h1 className="heading-display text-gray-900">FlipBot AI</h1>
+              <p className="body-large text-gray-600 mt-1">Professional Vehicle Intelligence Platform</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-sm text-gray-500">Deal Opportunities</p>
-                <p className="text-2xl font-bold text-green-600">{stats.deal_opportunities || 0}</p>
+            <div className="flex items-center space-x-8">
+              <div className="text-center">
+                <div className="pill pill-success mb-2">
+                  <span className="body-small">Deal Opportunities</span>
+                </div>
+                <p className="heading-3 text-secondary-600">{stats.deal_opportunities || 0}</p>
               </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-500">Total Vehicles</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.total_vehicles || 0}</p>
+              <div className="text-center">
+                <div className="pill pill-primary mb-2">
+                  <span className="body-small">Total Vehicles</span>
+                </div>
+                <p className="heading-3 text-primary-600">{stats.total_vehicles || 0}</p>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">🚗 Vehicle Search</h3>
-            <div className="text-sm text-gray-600">
-              <span className="text-blue-600">🔵 Database</span> | <span className="text-green-600">🟢 Live Scraping</span>
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        {/* Hero Search Section */}
+        <section className="relative mb-16">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-50 to-secondary-50 rounded-3xl -z-10"></div>
+          <div className="card-elevated bg-white/90 backdrop-blur-sm p-8 rounded-3xl">
+            <div className="text-center mb-8">
+              <h2 className="heading-2 text-gray-900 mb-3">Discover Your Next Profitable Vehicle</h2>
+              <p className="body-large text-gray-600">Search across multiple sources or scrape live listings in real-time</p>
             </div>
-          </div>
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="flex-1 flex">
-              <input
-                type="text"
-                placeholder="Search: BMW M3, Porsche 911, RAM TRX, 2021 Tesla Model S"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+            
+            <div className="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-4 mb-6">
+              <div className="flex-1 w-full flex">
+                <input
+                  type="text"
+                  placeholder="Search: BMW M3, Porsche 911, RAM TRX, 2021 Tesla Model S"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  className="form-input rounded-r-none text-base"
+                />
+                <button
+                  onClick={handleSearch}
+                  className="btn-secondary rounded-l-none border-l-0 flex items-center justify-center min-w-[60px]"
+                  title="Search Database"
+                >
+                  <Search className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={handleScrape}
+                  disabled={scrapingLoading || !searchQuery.trim()}
+                  className="btn-success rounded-l-none border-l-0 flex items-center justify-center min-w-[60px] disabled:opacity-50"
+                  title="Live Scrape from dealer websites"
+                >
+                  {scrapingLoading ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  ) : (
+                    <TrendingUp className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="btn-secondary flex items-center space-x-2"
+                >
+                  <Filter className="h-4 w-4" />
+                  <span className="body-small">Filters</span>
+                </button>
+                <button
+                  onClick={testScrapers}
+                  className="btn-secondary flex items-center space-x-2"
+                  title="Test Scrapers"
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  <span className="body-small">Test</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Search Status */}
+            {scrapingStatus && (
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <p className="body-base text-blue-800">{scrapingStatus}</p>
+              </div>
+            )}
+
+            {/* Quick Filter Pills */}
+            <div className="flex flex-wrap gap-3 justify-center">
               <button
-                onClick={handleSearch}
-                className="px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center"
-                title="🔵 DATABASE SEARCH: Search saved vehicles in database"
+                onClick={() => { setSortBy("est_profit"); setSortOrder("desc"); }}
+                className="pill pill-success hover:scale-105 cursor-pointer transition-transform"
               >
-                <Search className="h-5 w-5" />
+                💰 High Profit
               </button>
               <button
-                onClick={handleScrape}
-                disabled={scrapingLoading || !searchQuery.trim()}
-                className="px-6 py-3 bg-green-600 text-white rounded-r-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center"
-                title="🔴 LIVE SCRAPE: Find real vehicles from dealer websites (15-20 seconds)"
+                onClick={() => { setSortBy("roi_percent"); setSortOrder("desc"); }}
+                className="pill pill-primary hover:scale-105 cursor-pointer transition-transform"
               >
-                {scrapingLoading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                ) : (
-                  <TrendingUp className="h-5 w-5" />
-                )}
+                📈 High ROI
+              </button>
+              <button
+                onClick={() => { setFilters({...filters, priceMax: "50000"}); setTimeout(() => setFilters(prev => ({...prev})), 10); }}
+                className="pill pill-accent hover:scale-105 cursor-pointer transition-transform"
+              >
+                💵 Under $50K
+              </button>
+              <button
+                onClick={() => { setSortBy("mileage"); setSortOrder("asc"); }}
+                className="pill pill-warning hover:scale-105 cursor-pointer transition-transform"
+              >
+                🏃 Low Mileage
+              </button>
+              <button
+                onClick={() => { setSortBy("year"); setSortOrder("desc"); }}
+                className="pill pill-success hover:scale-105 cursor-pointer transition-transform"
+              >
+                ⚡ Newest
               </button>
             </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
-            >
-              <Filter className="h-5 w-5" />
-              <span>Filters</span>
-            </button>
-            <button
-              onClick={testScrapers}
-              className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
-              title="Test Scrapers"
-            >
-              <CheckCircle className="h-5 w-5" />
-              <span>Test</span>
-            </button>
+
+            {/* Advanced Filters */}
+            {showFilters && (
+              <div className="mt-8 p-6 bg-gray-50 rounded-xl">
+                <h3 className="heading-3 text-gray-900 mb-4">Advanced Filters</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  <input
+                    type="text"
+                    placeholder="Zip Code"
+                    value={filters.zipCode}
+                    onChange={(e) => setFilters({...filters, zipCode: e.target.value})}
+                    className="form-input"
+                  />
+                  <select
+                    value={filters.distance}
+                    onChange={(e) => setFilters({...filters, distance: e.target.value})}
+                    className="form-select"
+                  >
+                    <option value="">Distance</option>
+                    <option value="25">25 miles</option>
+                    <option value="50">50 miles</option>
+                    <option value="100">100 miles</option>
+                    <option value="250">250 miles</option>
+                    <option value="500">500 miles</option>
+                  </select>
+                  <input
+                    type="number"
+                    placeholder="Max Price"
+                    value={filters.priceMax}
+                    onChange={(e) => setFilters({...filters, priceMax: e.target.value})}
+                    className="form-input"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Min Year"
+                    value={filters.yearMin}
+                    onChange={(e) => setFilters({...filters, yearMin: e.target.value})}
+                    className="form-input"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Min Profit"
+                    value={filters.minProfit}
+                    onChange={(e) => setFilters({...filters, minProfit: e.target.value})}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* Scraping Status */}
-          {scrapingStatus && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-blue-800 text-sm">{scrapingStatus}</p>
-            </div>
-          )}
-
-          {/* Quick Filter Buttons */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            <button
-              onClick={() => {
-                setSortBy("est_profit");
-                setSortOrder("desc");
-              }}
-              className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm hover:bg-green-200 transition-colors"
-            >
-              💰 High Profit
-            </button>
-            <button
-              onClick={() => {
-                setSortBy("roi_percent");
-                setSortOrder("desc");
-              }}
-              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200 transition-colors"
-            >
-              📈 High ROI
-            </button>
-            <button
-              onClick={() => {
-                setFilters({...filters, priceMax: "50000"});
-                // Force re-render by updating a dummy state
-                setTimeout(() => setFilters(prev => ({...prev})), 10);
-              }}
-              className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition-colors"
-            >
-              💵 Under $50K
-            </button>
-            <button
-              onClick={() => {
-                setSortBy("mileage");
-                setSortOrder("asc");
-              }}
-              className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm hover:bg-orange-200 transition-colors"
-            >
-              🏃 Low Mileage
-            </button>
-            <button
-              onClick={() => {
-                setSortBy("year");
-                setSortOrder("desc");
-              }}
-              className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm hover:bg-gray-200 transition-colors"
-            >
-              ⚡ Newest
-            </button>
-          </div>
-
-          {/* Advanced Filters */}
-          {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-4 p-4 bg-gray-50 rounded-lg">
-              <input
-                type="text"
-                placeholder="Zip Code"
-                value={filters.zipCode}
-                onChange={(e) => setFilters({...filters, zipCode: e.target.value})}
-                className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <select
-                value={filters.distance}
-                onChange={(e) => setFilters({...filters, distance: e.target.value})}
-                className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Distance</option>
-                <option value="25">25 miles</option>
-                <option value="50">50 miles</option>
-                <option value="100">100 miles</option>
-                <option value="250">250 miles</option>
-                <option value="500">500 miles</option>
-              </select>
-              <input
-                type="number"
-                placeholder="Max Price"
-                value={filters.priceMax}
-                onChange={(e) => setFilters({...filters, priceMax: e.target.value})}
-                className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="number"
-                placeholder="Min Year"
-                value={filters.yearMin}
-                onChange={(e) => setFilters({...filters, yearMin: e.target.value})}
-                className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="number"
-                placeholder="Min Profit"
-                value={filters.minProfit}
-                onChange={(e) => setFilters({...filters, minProfit: e.target.value})}
-                className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          )}
-        </div>
+        </section>
 
         {/* Trending Section */}
         <div className="mb-8">
