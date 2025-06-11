@@ -98,6 +98,16 @@ function App() {
     }
   };
 
+  const updateVehicleStatus = async (vehicleId, status) => {
+    try {
+      await axios.put(`${API}/vehicles/${vehicleId}`, { status });
+      // Reload deals to reflect changes
+      loadDeals();
+    } catch (error) {
+      console.error("Error updating vehicle:", error);
+    }
+  };
+
   const handleScrape = async () => {
     if (!searchQuery.trim()) return;
 
