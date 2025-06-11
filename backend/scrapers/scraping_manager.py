@@ -15,7 +15,7 @@ from .autotrader_scraper import AutoTraderScraper
 from .cars_scraper import CarsScraper
 from .cargurus_scraper import CarGurusScraper
 from .craigslist_scraper import CraigslistScraper
-from ..server import Source, Vehicle, calculate_market_metrics
+from ..models import Source, Vehicle, calculate_market_metrics
 
 logger = logging.getLogger(__name__)
 
