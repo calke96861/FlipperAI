@@ -16,12 +16,44 @@ class SellerType(str, Enum):
     AUCTION = "auction"
 
 class Source(str, Enum):
+    # Major Retail Platforms
     AUTOTRADER = "autotrader"
     CARS_COM = "cars_com"
     CARGURUS = "cargurus"
-    CRAIGSLIST = "craigslist"
+    TRUECAR = "truecar"
+    EDMUNDS = "edmunds"
+    KBB = "kbb"
+    
+    # Online Retailers
+    CARMAX = "carmax"
+    CARVANA = "carvana"
+    VROOM = "vroom"
+    SHIFT = "shift"
+    
+    # Meta-Search & Aggregators
+    AUTOTEMPEST = "autotempest"
+    AUTOLIST = "autolist"
+    
+    # Marketplace & Auctions
+    EBAY_MOTORS = "ebay_motors"
     FACEBOOK = "facebook"
-    EBAY = "ebay"
+    CRAIGSLIST = "craigslist"
+    
+    # Enthusiast & Auction Sites
+    BRING_A_TRAILER = "bring_a_trailer"
+    CARS_AND_BIDS = "cars_and_bids"
+    HEMMINGS = "hemmings"
+    
+    # Analytics & Intelligence
+    ISEECARS = "iseecars"
+    CAREDGE = "caredge"
+    
+    # Dealer Networks
+    AUTONATION = "autonation"
+    
+    # Valuation & Direct Buy
+    PEDDLE = "peddle"
+    CARSDIRECT = "carsdirect"
 
 class ListingStatus(str, Enum):
     NEW = "new"
