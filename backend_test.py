@@ -75,7 +75,8 @@ class FlipBotAPITester:
             if result.get("success"):
                 print(f"✅ {name}")
             else:
-                print(f"❌ {name} - {result.get('error', f'Expected {result.get('expected_status')}, got {result.get('status_code')}')}") 
+                error_msg = f"Expected {result.get('expected_status')}, got {result.get('status_code')}"
+                print(f"❌ {name} - {result.get('error', error_msg)}") 
         
         print("="*50)
         return self.tests_passed == self.tests_run
