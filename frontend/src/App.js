@@ -365,7 +365,7 @@ function App() {
                 onClick={handleScrape}
                 disabled={scrapingLoading || !searchQuery.trim()}
                 className="px-6 py-3 bg-green-600 text-white rounded-r-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center"
-                title="Scrape Live Listings"
+                title="🔴 LIVE SCRAPE: Find real vehicles from dealer websites (15-20 seconds)"
               >
                 {scrapingLoading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
