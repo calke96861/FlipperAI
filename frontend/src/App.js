@@ -353,9 +353,34 @@ function App() {
               />
               <button
                 onClick={handleSearch}
-                className="px-6 py-3 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 transition-colors flex items-center"
+                className="px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center"
+                title="Search Database"
               >
                 <Search className="h-5 w-5" />
+              </button>
+              <button
+                onClick={handleScrape}
+                disabled={scrapingLoading || !searchQuery.trim()}
+                className="px-6 py-3 bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center"
+                title="Scrape Live Listings"
+              >
+                {scrapingLoading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                ) : (
+                  <TrendingUp className="h-5 w-5" />
+                )}
+              </button>
+              <button
+                onClick={handleScrape}
+                disabled={scrapingLoading || !searchQuery.trim()}
+                className="px-4 py-3 bg-green-600 text-white rounded-r-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center"
+                title="Scrape Live Listings"
+              >
+                {scrapingLoading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                ) : (
+                  <TrendingUp className="h-5 w-5" />
+                )}
               </button>
             </div>
             <button
@@ -365,7 +390,22 @@ function App() {
               <Filter className="h-5 w-5" />
               <span>Filters</span>
             </button>
+            <button
+              onClick={testScrapers}
+              className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              title="Test Scrapers"
+            >
+              <CheckCircle className="h-5 w-5" />
+              <span>Test</span>
+            </button>
           </div>
+
+          {/* Scraping Status */}
+          {scrapingStatus && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-blue-800 text-sm">{scrapingStatus}</p>
+            </div>
+          )}
 
           {/* Filters */}
           {showFilters && (
