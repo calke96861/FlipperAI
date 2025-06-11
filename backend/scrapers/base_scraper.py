@@ -244,12 +244,17 @@ class BaseScraper(ABC):
         if not title_text:
             return None, None, None
         
+        # Remove common prefixes
+        cleaned_title = title_text.replace("Used ", "").replace("New ", "").replace("Certified ", "").strip()
+        
         # Common pattern: "2023 Ford F-150" or "2022 Porsche 911"
-        match = re.match(r'(\d{4})\s+([A-Za-z]+)\s+(.+)', title_text.strip())
+        match = re.match(r'(\d{4})\s+([A-Za-z]+)\s+(.+)', cleaned_title)
         if match:
             year = int(match.group(1))
             make = match.group(2)
-            model = match.group(3).split()[0]  # Take first word of model
+            model_full = match.group(3)
+            # For models like "1500 TRX", keep multiple words
+            model = model_full.strip()
             return year, make, model
         
         return None, None, None
