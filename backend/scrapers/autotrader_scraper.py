@@ -73,12 +73,19 @@ class AutoTraderScraper(BaseScraper):
         }
         
         if query:
-            # Try to parse make/model from query
+            # Don't try to parse make/model from complex queries
+            # Just use the full query as a keyword search
             query_parts = query.strip().split()
-            if len(query_parts) >= 1:
+            
+            # Only try to parse make/model if it's clearly just make/model (no year)
+            if len(query_parts) == 2 and not query_parts[0].isdigit():
                 params['makeCodeList'] = query_parts[0].upper()
-            if len(query_parts) >= 2:
-                params['modelCodeList'] = query_parts[1].upper()
+                if len(query_parts) >= 2:
+                    params['modelCodeList'] = query_parts[1].upper()
+            # For complex queries with years or multiple words, use as-is
+            else:
+                # Use the basic search without make/model filtering
+                pass
         
         if location:
             params['zip'] = location
