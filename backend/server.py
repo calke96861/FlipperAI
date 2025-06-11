@@ -15,7 +15,7 @@ import random
 
 # Import scraping system
 from .scrapers.scraping_manager import ScrapingManager, ScrapingJob
-from .models import Source, SellerType, ListingStatus
+from .models import Source, SellerType, ListingStatus, Vehicle, calculate_market_metrics
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
