@@ -361,19 +361,7 @@ function App() {
               <button
                 onClick={handleScrape}
                 disabled={scrapingLoading || !searchQuery.trim()}
-                className="px-6 py-3 bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center"
-                title="Scrape Live Listings"
-              >
-                {scrapingLoading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                ) : (
-                  <TrendingUp className="h-5 w-5" />
-                )}
-              </button>
-              <button
-                onClick={handleScrape}
-                disabled={scrapingLoading || !searchQuery.trim()}
-                className="px-4 py-3 bg-green-600 text-white rounded-r-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center"
+                className="px-6 py-3 bg-green-600 text-white rounded-r-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors flex items-center"
                 title="Scrape Live Listings"
               >
                 {scrapingLoading ? (
