@@ -30,10 +30,12 @@ class CarsScraper(BaseScraper):
                 '[data-test="vehicle-card"]'
             ],
             'title': [
+                '.vehicle-card-link',
                 '.vehicle-card-title',
                 '.listing-title',
-                'h3',
-                '.vehicle-details h3'
+                'h3 a',
+                '.vehicle-details h3 a',
+                '.vehicle-card h3 a'
             ],
             'price': [
                 '.primary-price',
