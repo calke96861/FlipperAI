@@ -87,10 +87,21 @@ class ScrapingManager:
     async def initialize_scrapers(self):
         """Initialize all available scrapers"""
         scraper_classes = {
+            # Major Retail Platforms
             Source.AUTOTRADER: AutoTraderScraper,
             Source.CARS_COM: CarsScraper,
             Source.CARGURUS: CarGurusScraper,
-            Source.CRAIGSLIST: CraigslistScraper
+            
+            # Online Retailers
+            Source.CARMAX: CarMaxScraper,
+            Source.CARVANA: CarvanaScraper,
+            
+            # Marketplace & Private Sales
+            Source.FACEBOOK: FacebookMarketplaceScraper,
+            Source.CRAIGSLIST: CraigslistScraper,
+            
+            # Enthusiast & Auction Platforms
+            Source.BRING_A_TRAILER: BringATrailerScraper,
         }
         
         for source, scraper_class in scraper_classes.items():
