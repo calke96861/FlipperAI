@@ -673,7 +673,7 @@ function App() {
               ))}
             </div>
           )}
-        </div>
+        </section>
       </main>
     </div>
   );
