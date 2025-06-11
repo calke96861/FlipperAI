@@ -448,12 +448,12 @@ async def quick_scrape(query: str, location: str = "", max_results: int = 10):
         raise HTTPException(status_code=503, detail="Scraping system not available")
     
     try:
-        # Quick scrape with limited results
+        # Quick scrape with most reliable sources
         job = ScrapingJob(
             query=query,
             location=location,
             max_results_per_source=max_results,
-            sources=[Source.AUTOTRADER, Source.CARS_COM]  # Limit to 2 sources for speed
+            sources=[Source.CARS_COM, Source.CARMAX, Source.CARVANA]  # Fast, reliable sources
         )
         
         result = await scraping_manager.scrape_vehicles(job)
@@ -463,13 +463,156 @@ async def quick_scrape(query: str, location: str = "", max_results: int = 10):
             "location": location,
             "vehicles_found": len(result.vehicles),
             "duration": result.duration,
-            "vehicles": [process_scraped_vehicle(vehicle) for vehicle in result.vehicles[:10]],  # Return first 10
+            "vehicles": [process_scraped_vehicle(vehicle) for vehicle in result.vehicles[:10]],
             "source_results": {k.value: v for k, v in result.source_results.items()}
         }
         
     except Exception as e:
         logger.error(f"Quick scrape failed: {e}")
         raise HTTPException(status_code=500, detail=f"Quick scrape failed: {str(e)}")
+
+@api_router.post("/scrape/comprehensive")
+async def comprehensive_scrape(query: str, location: str = "", max_results: int = 20):
+    """Comprehensive scrape across all major platforms"""
+    global scraping_manager
+    
+    if not scraping_manager:
+        raise HTTPException(status_code=503, detail="Scraping system not available")
+    
+    try:
+        # Comprehensive scrape with all available sources
+        job = ScrapingJob(
+            query=query,
+            location=location,
+            max_results_per_source=max_results,
+            source_categories=["retail", "marketplace"]  # Broad coverage
+        )
+        
+        result = await scraping_manager.scrape_vehicles(job)
+        
+        return {
+            "query": query,
+            "location": location,
+            "vehicles_found": len(result.vehicles),
+            "duration": result.duration,
+            "vehicles": [process_scraped_vehicle(vehicle) for vehicle in result.vehicles[:50]],
+            "source_results": {k.value: v for k, v in result.source_results.items()},
+            "categories_used": ["retail", "marketplace"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Comprehensive scrape failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Comprehensive scrape failed: {str(e)}")
+
+@api_router.post("/scrape/enthusiast")
+async def enthusiast_scrape(query: str, max_results: int = 15):
+    """Scrape enthusiast and auction platforms for special vehicles"""
+    global scraping_manager
+    
+    if not scraping_manager:
+        raise HTTPException(status_code=503, detail="Scraping system not available")
+    
+    try:
+        # Enthusiast-focused scrape
+        job = ScrapingJob(
+            query=query,
+            location="",  # Auctions are typically nationwide
+            max_results_per_source=max_results,
+            source_categories=["auction", "enthusiast"]
+        )
+        
+        result = await scraping_manager.scrape_vehicles(job)
+        
+        return {
+            "query": query,
+            "vehicles_found": len(result.vehicles),
+            "duration": result.duration,
+            "vehicles": [process_scraped_vehicle(vehicle) for vehicle in result.vehicles],
+            "source_results": {k.value: v for k, v in result.source_results.items()},
+            "categories_used": ["auction", "enthusiast"],
+            "note": "Auction and enthusiast platform data - prices may reflect final sale values"
+        }
+        
+    except Exception as e:
+        logger.error(f"Enthusiast scrape failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Enthusiast scrape failed: {str(e)}")
+
+@api_router.post("/scrape/private-party")
+async def private_party_scrape(query: str, location: str = "", max_results: int = 25):
+    """Scrape private party platforms for best deals"""
+    global scraping_manager
+    
+    if not scraping_manager:
+        raise HTTPException(status_code=503, detail="Scraping system not available")
+    
+    try:
+        # Private party focused scrape
+        job = ScrapingJob(
+            query=query,
+            location=location,
+            max_results_per_source=max_results,
+            source_categories=["marketplace"]
+        )
+        
+        result = await scraping_manager.scrape_vehicles(job)
+        
+        return {
+            "query": query,
+            "location": location,
+            "vehicles_found": len(result.vehicles),
+            "duration": result.duration,
+            "vehicles": [process_scraped_vehicle(vehicle) for vehicle in result.vehicles],
+            "source_results": {k.value: v for k, v in result.source_results.items()},
+            "categories_used": ["marketplace"],
+            "note": "Private party listings - typically offer best profit margins"
+        }
+        
+    except Exception as e:
+        logger.error(f"Private party scrape failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Private party scrape failed: {str(e)}")
+
+@api_router.get("/scrape/sources")
+async def get_available_sources():
+    """Get all available scraping sources organized by category"""
+    return {
+        "retail_platforms": [
+            {"source": "cars_com", "name": "Cars.com", "description": "Major automotive marketplace"},
+            {"source": "autotrader", "name": "AutoTrader", "description": "Leading automotive marketplace"},
+            {"source": "cargurus", "name": "CarGurus", "description": "Automotive research and shopping"},
+            {"source": "carmax", "name": "CarMax", "description": "Large used car retailer"},
+            {"source": "carvana", "name": "Carvana", "description": "Online car retailer with delivery"},
+            {"source": "truecar", "name": "TrueCar", "description": "Car buying and pricing platform"},
+            {"source": "edmunds", "name": "Edmunds", "description": "Automotive information and classifieds"},
+            {"source": "kbb", "name": "Kelley Blue Book", "description": "Vehicle valuation and classifieds"}
+        ],
+        "online_retailers": [
+            {"source": "carmax", "name": "CarMax", "description": "No-haggle used car retailer"},
+            {"source": "carvana", "name": "Carvana", "description": "Buy online, delivered to you"},
+            {"source": "vroom", "name": "Vroom", "description": "Online car retailer"},
+            {"source": "shift", "name": "Shift", "description": "Peer-to-peer car marketplace"}
+        ],
+        "marketplace_platforms": [
+            {"source": "facebook", "name": "Facebook Marketplace", "description": "Local private party deals"},
+            {"source": "craigslist", "name": "Craigslist", "description": "Local classified advertisements"},
+            {"source": "ebay_motors", "name": "eBay Motors", "description": "Online auction and sales"}
+        ],
+        "enthusiast_auction": [
+            {"source": "bring_a_trailer", "name": "Bring a Trailer", "description": "Enthusiast auction platform"},
+            {"source": "cars_and_bids", "name": "Cars & Bids", "description": "Modern enthusiast auctions"},
+            {"source": "hemmings", "name": "Hemmings", "description": "Classic and muscle car marketplace"}
+        ],
+        "analytics_platforms": [
+            {"source": "iseecars", "name": "iSeeCars", "description": "Automotive analytics and deals"},
+            {"source": "caredge", "name": "CarEdge", "description": "Vehicle analytics and insights"}
+        ],
+        "dealer_networks": [
+            {"source": "autonation", "name": "AutoNation", "description": "Major automotive retailer network"}
+        ],
+        "valuation_services": [
+            {"source": "peddle", "name": "Peddle", "description": "Instant cash offers"},
+            {"source": "carsdirect", "name": "CarsDirect", "description": "New car incentives and quotes"}
+        ]
+    }
 
 # Include the router in the main app
 app.include_router(api_router)
