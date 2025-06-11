@@ -102,15 +102,54 @@ function App() {
     }
   };
 
-  const updateVehicleStatus = async (vehicleId, status) => {
-    try {
-      await axios.put(`${API}/vehicles/${vehicleId}`, { status });
-      // Reload deals to reflect changes
-      loadDeals();
-    } catch (error) {
-      console.error("Error updating vehicle:", error);
-    }
+  const sortVehicles = (vehicleList) => {
+    return [...vehicleList].sort((a, b) => {
+      let aVal = a[sortBy] || 0;
+      let bVal = b[sortBy] || 0;
+      
+      if (sortBy === "asking_price" || sortBy === "est_profit" || sortBy === "roi_percent" || sortBy === "flip_score") {
+        aVal = parseFloat(aVal) || 0;
+        bVal = parseFloat(bVal) || 0;
+      }
+      
+      if (sortOrder === "desc") {
+        return bVal - aVal;
+      } else {
+        return aVal - bVal;
+      }
+    });
   };
+
+  const filterVehicles = (vehicleList) => {
+    return vehicleList.filter(vehicle => {
+      if (filters.priceMax && vehicle.asking_price > parseFloat(filters.priceMax)) return false;
+      if (filters.yearMin && vehicle.year < parseInt(filters.yearMin)) return false;
+      if (filters.minProfit && (vehicle.est_profit || 0) < parseFloat(filters.minProfit)) return false;
+      return true;
+    });
+  };
+
+  const toggleSaveVehicle = (vehicleId) => {
+    const newSaved = new Set(savedVehicles);
+    if (newSaved.has(vehicleId)) {
+      newSaved.delete(vehicleId);
+    } else {
+      newSaved.add(vehicleId);
+    }
+    setSavedVehicles(newSaved);
+    localStorage.setItem('savedVehicles', JSON.stringify([...newSaved]));
+  };
+
+  // Load saved vehicles from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('savedVehicles');
+    if (saved) {
+      setSavedVehicles(new Set(JSON.parse(saved)));
+    }
+  }, []);
+
+  // Apply sorting and filtering to vehicles
+  const processedVehicles = sortVehicles(filterVehicles(vehicles));
 
   const handleScrape = async () => {
     if (!searchQuery.trim()) return;
