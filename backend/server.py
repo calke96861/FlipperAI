@@ -52,28 +52,6 @@ async def shutdown_event():
     client.close()
 
 # Enums for vehicle data
-class SellerType(str, Enum):
-    PRIVATE = "private"
-    DEALER = "dealer"
-    AUCTION = "auction"
-
-class Source(str, Enum):
-    AUTOTRADER = "autotrader"
-    CARS_COM = "cars_com"
-    CARGURUS = "cargurus"
-    CRAIGSLIST = "craigslist"
-    FACEBOOK = "facebook"
-    EBAY = "ebay"
-
-class ListingStatus(str, Enum):
-    NEW = "new"
-    WATCHING = "watching"
-    CONTACTED = "contacted"
-    NEGOTIATING = "negotiating"
-    PURCHASED = "purchased"
-    LISTED_FOR_SALE = "listed_for_sale"
-    SOLD = "sold"
-    PASSED = "passed"
 
 # Pydantic Models
 class Vehicle(BaseModel):
