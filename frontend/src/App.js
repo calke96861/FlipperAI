@@ -585,56 +585,73 @@ function App() {
           </div>
         </section>
 
-        {/* Deals Section */}
-        <div>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-              <DollarSign className="h-6 w-6 mr-2" />
-              Deal Opportunities ({processedVehicles.length})
-            </h2>
-            <div className="flex items-center space-x-4">
-              {/* Sort Dropdown */}
-              <select
-                value={`${sortBy}-${sortOrder}`}
-                onChange={(e) => {
-                  const [field, order] = e.target.value.split('-');
-                  setSortBy(field);
-                  setSortOrder(order);
-                }}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              >
-                <option value="flip_score-desc">🎯 Best Flip Score</option>
-                <option value="est_profit-desc">💰 Highest Profit</option>
-                <option value="roi_percent-desc">📈 Highest ROI</option>
-                <option value="asking_price-asc">💵 Lowest Price</option>
-                <option value="asking_price-desc">💎 Highest Price</option>
-                <option value="year-desc">⚡ Newest Year</option>
-                <option value="year-asc">🏛️ Oldest Year</option>
-                <option value="mileage-asc">🏃 Lowest Mileage</option>
-                <option value="mileage-desc">🛣️ Highest Mileage</option>
-              </select>
+        {/* Deal Opportunities Section */}
+        <section>
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 space-y-4 lg:space-y-0">
+            <div>
+              <h2 className="heading-2 text-gray-900 mb-2">Deal Opportunities</h2>
+              <p className="body-base text-gray-600">
+                {processedVehicles.length} vehicles found • Sorted by {sortBy.replace('_', ' ')}
+              </p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+              {/* Enhanced Sort Dropdown */}
+              <div className="flex items-center space-x-2">
+                <span className="body-small text-gray-500 font-medium">Sort by:</span>
+                <select
+                  value={`${sortBy}-${sortOrder}`}
+                  onChange={(e) => {
+                    const [field, order] = e.target.value.split('-');
+                    setSortBy(field);
+                    setSortOrder(order);
+                  }}
+                  className="form-select min-w-[180px]"
+                >
+                  <option value="flip_score-desc">🎯 Best Opportunities</option>
+                  <option value="est_profit-desc">💰 Highest Profit</option>
+                  <option value="roi_percent-desc">📈 Highest ROI</option>
+                  <option value="asking_price-asc">💵 Lowest Price</option>
+                  <option value="asking_price-desc">💎 Highest Price</option>
+                  <option value="year-desc">⚡ Newest Year</option>
+                  <option value="year-asc">🏛️ Oldest Year</option>
+                  <option value="mileage-asc">🏃 Lowest Mileage</option>
+                  <option value="mileage-desc">🛣️ Highest Mileage</option>
+                </select>
+              </div>
               
-              {/* View Toggle */}
-              <div className="flex border border-gray-300 rounded-lg">
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`px-3 py-2 text-sm ${viewMode === "grid" ? "bg-blue-600 text-white" : "bg-white text-gray-700"} rounded-l-lg transition-colors`}
-                >
-                  Grid
-                </button>
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={`px-3 py-2 text-sm ${viewMode === "list" ? "bg-blue-600 text-white" : "bg-white text-gray-700"} rounded-r-lg transition-colors`}
-                >
-                  List
-                </button>
+              {/* Enhanced View Toggle */}
+              <div className="flex items-center space-x-2">
+                <span className="body-small text-gray-500 font-medium">View:</span>
+                <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`px-4 py-2 body-small font-medium transition-colors ${
+                      viewMode === "grid" 
+                        ? "bg-primary-600 text-white" 
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    Grid
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`px-4 py-2 body-small font-medium transition-colors ${
+                      viewMode === "list" 
+                        ? "bg-primary-600 text-white" 
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    List
+                  </button>
+                </div>
               </div>
               
               <button
                 onClick={loadDeals}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                className="btn-success body-small"
               >
-                Refresh Deals
+                Refresh Data
               </button>
             </div>
           </div>
