@@ -737,12 +737,12 @@ function App() {
                   <span className="body-small">Filters</span>
                 </button>
                 <button
-                  onClick={testScrapers}
+                  onClick={handleScrapeComprehensive}
                   className="btn-secondary flex items-center space-x-2"
-                  title="Test Scrapers"
+                  title="Comprehensive Search"
                 >
                   <CheckCircle className="h-4 w-4" />
-                  <span className="body-small">Test</span>
+                  <span className="body-small">All Sources</span>
                 </button>
               </div>
             </div>
