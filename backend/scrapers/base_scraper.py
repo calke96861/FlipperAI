@@ -149,7 +149,7 @@ class BaseScraper(ABC):
         
         # Create page with random user agent
         self.page = await self.browser.new_page()
-        await self.page.set_user_agent(self.ua.random)
+        await self.page.set_extra_http_headers({'User-Agent': self.ua.random})
         
         # Set viewport to avoid mobile detection
         await self.page.set_viewport_size({"width": 1920, "height": 1080})
