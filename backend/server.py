@@ -422,6 +422,106 @@ async def get_stats():
         "last_updated": datetime.utcnow()
     }
 
+# ============== LIVE SCRAPING ENDPOINTS ==============
+
+@api_router.post("/scrape", response_model=ScrapingJobResponse)
+async def start_scraping(job_data: ScrapingJobCreate, background_tasks: BackgroundTasks):
+    """Start a new vehicle scraping job"""
+    global scraping_manager
+    
+    if not scraping_manager:
+        raise HTTPException(status_code=503, detail="Scraping system not available")
+    
+    try:
+        # Create scraping job
+        job = ScrapingJob(
+            query=job_data.query,
+            location=job_data.location or "",
+            max_results_per_source=job_data.max_results_per_source or 20,
+            sources=job_data.sources or [Source.AUTOTRADER, Source.CARS_COM, Source.CARGURUS, Source.CRAIGSLIST]
+        )
+        
+        # Start scraping in background
+        job_id = f"{job.query}_{job.location}_{job.created_at.timestamp()}"
+        
+        # For demo, run synchronously but in production this would be background
+        result = await scraping_manager.scrape_vehicles(job)
+        
+        return ScrapingJobResponse(
+            job_id=job_id,
+            status="completed",
+            message=f"Successfully scraped {len(result.vehicles)} vehicles",
+            vehicles_found=len(result.vehicles),
+            duration=result.duration,
+            source_results={k.value: v for k, v in result.source_results.items()}
+        )
+        
+    except Exception as e:
+        logger.error(f"Scraping job failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Scraping failed: {str(e)}")
+
+@api_router.get("/scrape/test", response_model=Dict[str, bool])
+async def test_scrapers():
+    """Test all scrapers to see which are working"""
+    global scraping_manager
+    
+    if not scraping_manager:
+        raise HTTPException(status_code=503, detail="Scraping system not available")
+    
+    try:
+        results = await scraping_manager.test_all_scrapers()
+        return {source.value: status for source, status in results.items()}
+    except Exception as e:
+        logger.error(f"Scraper test failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Scraper test failed: {str(e)}")
+
+@api_router.get("/scrape/stats")
+async def get_scraping_stats():
+    """Get scraping operation statistics"""
+    global scraping_manager
+    
+    if not scraping_manager:
+        raise HTTPException(status_code=503, detail="Scraping system not available")
+    
+    try:
+        stats = scraping_manager.get_scraping_stats()
+        return stats
+    except Exception as e:
+        logger.error(f"Failed to get scraping stats: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get scraping stats: {str(e)}")
+
+@api_router.post("/scrape/quick")
+async def quick_scrape(query: str, location: str = "", max_results: int = 10):
+    """Quick scrape for immediate results (limited scope)"""
+    global scraping_manager
+    
+    if not scraping_manager:
+        raise HTTPException(status_code=503, detail="Scraping system not available")
+    
+    try:
+        # Quick scrape with limited results
+        job = ScrapingJob(
+            query=query,
+            location=location,
+            max_results_per_source=max_results,
+            sources=[Source.AUTOTRADER, Source.CARS_COM]  # Limit to 2 sources for speed
+        )
+        
+        result = await scraping_manager.scrape_vehicles(job)
+        
+        return {
+            "query": query,
+            "location": location,
+            "vehicles_found": len(result.vehicles),
+            "duration": result.duration,
+            "vehicles": [vehicle.to_dict() for vehicle in result.vehicles[:10]],  # Return first 10
+            "source_results": {k.value: v for k, v in result.source_results.items()}
+        }
+        
+    except Exception as e:
+        logger.error(f"Quick scrape failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Quick scrape failed: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
