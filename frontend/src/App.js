@@ -275,11 +275,12 @@ function App() {
   };
 
   const VehicleCard = ({ vehicle }) => {
-    const profitColor = vehicle.est_profit > 0 ? 'text-green-600' : 'text-red-600';
-    const roiColor = vehicle.roi_percent > 0 ? 'text-green-600' : 'text-red-600';
+    const profitColor = (vehicle.est_profit || 0) > 0 ? 'text-green-600' : 'text-red-600';
+    const roiColor = (vehicle.roi_percent || 0) > 0 ? 'text-green-600' : 'text-red-600';
+    const isSaved = savedVehicles.has(vehicle.id);
 
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+      <div className={`bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow ${isSaved ? 'ring-2 ring-yellow-400' : ''}`}>
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">
@@ -300,12 +301,17 @@ function App() {
             </div>
           </div>
           <div className="text-right">
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1 mb-2">
               <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
                 {vehicle.source ? vehicle.source.replace('_', '.') : 'unknown'}
               </span>
+              {(vehicle.flip_score || 0) >= 5 && (
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                  🔥 Hot Deal
+                </span>
+              )}
             </div>
-            <p className="text-xs text-gray-500 mt-1">{vehicle.seller_type || 'unknown'}</p>
+            <p className="text-xs text-gray-500">{vehicle.seller_type || 'unknown'}</p>
           </div>
         </div>
 
@@ -335,15 +341,25 @@ function App() {
           </div>
           <div className="text-center">
             <p className="text-xs text-gray-500">Flip Score</p>
-            <p className="text-lg font-bold text-blue-600">{vehicle.flip_score || 0}/10</p>
+            <div className="flex items-center justify-center">
+              <p className="text-lg font-bold text-blue-600">{vehicle.flip_score || 0}/10</p>
+              {(vehicle.flip_score || 0) >= 7 && <span className="ml-1 text-red-500">🔥</span>}
+            </div>
           </div>
         </div>
 
         <div className="flex justify-between items-center">
           <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(vehicle.status)}`}>
-            {vehicle.status.replace('_', ' ')}
+            {(vehicle.status || 'new').replace('_', ' ')}
           </span>
           <div className="flex space-x-2">
+            <button
+              onClick={() => toggleSaveVehicle(vehicle.id)}
+              className={`p-2 ${isSaved ? 'text-yellow-600' : 'text-gray-400'} hover:text-yellow-600 transition-colors`}
+              title={isSaved ? "Remove from Saved" : "Save Vehicle"}
+            >
+              {isSaved ? <CheckCircle className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
             <button
               onClick={() => updateVehicleStatus(vehicle.id, 'watching')}
               className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
