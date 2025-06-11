@@ -258,22 +258,23 @@ function App() {
     const Icon = isUp ? ArrowUpRight : ArrowDownRight;
     
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className={`p-2 rounded-full ${isUp ? 'bg-green-100' : 'bg-red-100'}`}>
-              <Icon className={`h-5 w-5 ${isUp ? 'text-green-600' : 'text-red-600'}`} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">{trend.make_model}</p>
-              <p className="text-xs text-gray-500">{trend.total_listings} listings</p>
-            </div>
+      <div className="card-elevated h-32 p-6 flex items-center">
+        <div className="flex items-center space-x-4 w-full">
+          <div className={`p-3 rounded-xl ${isUp ? 'bg-secondary-100' : 'bg-red-100'}`}>
+            <Icon className={`h-6 w-6 ${isUp ? 'text-secondary-600' : 'text-red-600'}`} />
+          </div>
+          <div className="flex-1">
+            <h4 className="heading-3 text-gray-900">{trend.make_model}</h4>
+            <p className="caption text-gray-500">{trend.total_listings} listings</p>
           </div>
           <div className="text-right">
-            <p className={`text-lg font-semibold ${isUp ? 'text-green-600' : 'text-red-600'}`}>
-              {formatPercent(trend.price_change_percent)}
-            </p>
-            <p className="text-sm text-gray-500">{formatCurrency(trend.avg_price)}</p>
+            <div className="flex items-center space-x-2 mb-1">
+              <span className={`heading-3 ${isUp ? 'text-secondary-600' : 'text-red-600'}`}>
+                {formatPercent(trend.price_change_percent)}
+              </span>
+            </div>
+            <div className="h-px bg-gray-200 mb-1"></div>
+            <p className="body-small text-gray-600 font-semibold">{formatCurrency(trend.avg_price)}</p>
           </div>
         </div>
       </div>
