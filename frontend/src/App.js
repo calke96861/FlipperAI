@@ -572,18 +572,17 @@ function App() {
           </div>
         </section>
 
-        {/* Trending Section */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <TrendingUp className="h-6 w-6 mr-2" />
-            Market Trends
+        {/* Market Trends Section */}
+        <section className="mb-16">
+          <h2 className="heading-2 text-gray-900 mb-8 text-center">
+            Market Intelligence
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {trending.map((trend, index) => (
               <TrendingTile key={index} trend={trend} />
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Deals Section */}
         <div>
