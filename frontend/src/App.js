@@ -640,14 +640,14 @@ function App() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
               <p className="text-gray-600 mt-4">Loading vehicles...</p>
             </div>
-          ) : vehicles.length === 0 ? (
+          ) : processedVehicles.length === 0 ? (
             <div className="text-center py-12">
               <Car className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600">No vehicles found. Try adjusting your search or filters.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {vehicles.map((vehicle) => (
+            <div className={viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 gap-6" : "space-y-4"}>
+              {processedVehicles.map((vehicle) => (
                 <VehicleCard key={vehicle.id} vehicle={vehicle} />
               ))}
             </div>
