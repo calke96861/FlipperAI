@@ -345,7 +345,7 @@ function App() {
             <div className="flex-1 flex">
               <input
                 type="text"
-                placeholder="Search make, model, or trim (e.g., Porsche 911, BMW M3)"
+                placeholder="Search: BMW M3, Porsche 911, RAM TRX, 2021 Tesla Model S"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
