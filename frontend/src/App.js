@@ -262,11 +262,11 @@ function App() {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <p className="text-sm text-gray-500">Asking Price</p>
-            <p className="text-xl font-bold text-gray-900">{formatCurrency(vehicle.asking_price)}</p>
+            <p className="text-xl font-bold text-gray-900">{formatCurrency(vehicle.asking_price || 0)}</p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Market Value</p>
-            <p className="text-xl font-bold text-gray-700">{formatCurrency(vehicle.market_value)}</p>
+            <p className="text-xl font-bold text-gray-700">{formatCurrency(vehicle.market_value || 0)}</p>
           </div>
         </div>
 
@@ -274,18 +274,18 @@ function App() {
           <div className="text-center">
             <p className="text-xs text-gray-500">Est. Profit</p>
             <p className={`text-lg font-bold ${profitColor}`}>
-              {formatCurrency(vehicle.est_profit)}
+              {formatCurrency(vehicle.est_profit || 0)}
             </p>
           </div>
           <div className="text-center">
             <p className="text-xs text-gray-500">ROI</p>
             <p className={`text-lg font-bold ${roiColor}`}>
-              {formatPercent(vehicle.roi_percent)}
+              {formatPercent(vehicle.roi_percent || 0)}
             </p>
           </div>
           <div className="text-center">
             <p className="text-xs text-gray-500">Flip Score</p>
-            <p className="text-lg font-bold text-blue-600">{vehicle.flip_score}/10</p>
+            <p className="text-lg font-bold text-blue-600">{vehicle.flip_score || 0}/10</p>
           </div>
         </div>
 
