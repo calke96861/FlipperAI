@@ -183,17 +183,28 @@ class ScrapingManager:
         seen_vins = set()
         unique_vehicles = []
         
-        for vehicle in vehicles:
+        for i, vehicle in enumerate(vehicles):
+            logger.info(f"Processing vehicle {i+1}: make={vehicle.make}, model={vehicle.model}, price={vehicle.asking_price}, url={vehicle.url}")
+            
             # Skip if we've seen this URL before
             if vehicle.url and vehicle.url in seen_urls:
+                logger.info(f"Skipping vehicle {i+1}: duplicate URL")
                 continue
             
             # Skip if we've seen this VIN before (and VIN exists)
             if vehicle.vin and vehicle.vin in seen_vins:
+                logger.info(f"Skipping vehicle {i+1}: duplicate VIN")
                 continue
             
             # Skip if essential data is missing
-            if not vehicle.asking_price or not vehicle.make or not vehicle.model:
+            if not vehicle.asking_price:
+                logger.info(f"Skipping vehicle {i+1}: missing asking_price")
+                continue
+            if not vehicle.make:
+                logger.info(f"Skipping vehicle {i+1}: missing make")
+                continue
+            if not vehicle.model:
+                logger.info(f"Skipping vehicle {i+1}: missing model")
                 continue
             
             if vehicle.url:
@@ -202,6 +213,7 @@ class ScrapingManager:
                 seen_vins.add(vehicle.vin)
                 
             unique_vehicles.append(vehicle)
+            logger.info(f"Added vehicle {i+1}: {vehicle.year} {vehicle.make} {vehicle.model}")
         
         logger.info(f"Deduplicated {len(vehicles)} vehicles to {len(unique_vehicles)} unique vehicles")
         return unique_vehicles
