@@ -670,41 +670,7 @@ function App() {
             </div>
           </div>
 
-  const LoadingSkeleton = () => (
-    <div className="card p-6 h-80">
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <div className="skeleton h-6 w-48 mb-2 rounded"></div>
-          <div className="skeleton h-4 w-32 mb-3 rounded"></div>
-          <div className="flex space-x-4">
-            <div className="skeleton h-4 w-20 rounded"></div>
-            <div className="skeleton h-4 w-24 rounded"></div>
-          </div>
-        </div>
-        <div className="skeleton h-6 w-20 rounded-full"></div>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="skeleton h-16 rounded-xl"></div>
-        <div className="skeleton h-16 rounded-xl"></div>
-      </div>
-      
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="skeleton h-12 rounded-lg"></div>
-        <div className="skeleton h-12 rounded-lg"></div>
-        <div className="skeleton h-12 rounded-lg"></div>
-      </div>
-      
-      <div className="flex justify-between items-center">
-        <div className="skeleton h-6 w-16 rounded-full"></div>
-        <div className="flex space-x-2">
-          <div className="skeleton h-8 w-8 rounded-lg"></div>
-          <div className="skeleton h-8 w-8 rounded-lg"></div>
-          <div className="skeleton h-8 w-20 rounded-lg"></div>
-        </div>
-      </div>
-    </div>
-  );
+
         </section>
       </main>
     </div>
