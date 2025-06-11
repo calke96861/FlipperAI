@@ -45,7 +45,7 @@ class Vehicle(BaseModel):
     asking_price: float
     market_value: Optional[float] = None
     location: str
-    zip_code: str
+    zip_code: Optional[str] = None
     distance_miles: Optional[int] = None
     seller_type: SellerType
     source: Source
