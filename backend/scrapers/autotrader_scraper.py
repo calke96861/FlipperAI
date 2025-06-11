@@ -10,7 +10,7 @@ from urllib.parse import urlencode, urlparse, parse_qs, urljoin
 from bs4 import BeautifulSoup
 
 from .base_scraper import BaseScraper, VehicleData
-from ..server import Source, SellerType
+from ..models import Source, SellerType
 
 logger = logging.getLogger(__name__)
 
