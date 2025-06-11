@@ -36,6 +36,10 @@ function App() {
   const [showFilters, setShowFilters] = useState(false);
   const [scrapingStatus, setScrapingStatus] = useState(null);
   const [scrapingLoading, setScrapingLoading] = useState(false);
+  const [sortBy, setSortBy] = useState("flip_score");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [viewMode, setViewMode] = useState("grid");
+  const [savedVehicles, setSavedVehicles] = useState(new Set());
 
   // Load initial data
   useEffect(() => {
