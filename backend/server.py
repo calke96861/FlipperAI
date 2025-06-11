@@ -115,6 +115,21 @@ class ScrapingJobResponse(BaseModel):
     source_results: Optional[Dict[str, int]] = None
 
 # Helper Functions
+def process_scraped_vehicle(vehicle_data):
+    """Convert VehicleData to dict with calculated metrics"""
+    try:
+        # Convert to Vehicle model for calculations
+        vehicle_dict = vehicle_data.to_dict()
+        vehicle = Vehicle(**vehicle_dict)
+        
+        # Calculate market metrics
+        vehicle = calculate_market_metrics(vehicle)
+        
+        return vehicle.dict()
+    except Exception as e:
+        logger.error(f"Error processing vehicle: {e}")
+        # Return basic dict if calculations fail
+        return vehicle_data.to_dict()
 
 async def generate_mock_vehicles():
     """Generate mock vehicle data for demonstration"""
