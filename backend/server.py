@@ -54,31 +54,6 @@ async def shutdown_event():
 # Enums for vehicle data
 
 # Pydantic Models
-class Vehicle(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    vin: Optional[str] = None
-    make: str
-    model: str
-    trim: Optional[str] = None
-    year: int
-    mileage: Optional[int] = None
-    asking_price: float
-    market_value: Optional[float] = None
-    location: str
-    zip_code: str
-    distance_miles: Optional[int] = None
-    seller_type: SellerType
-    source: Source
-    url: str
-    date_listed: Optional[datetime] = None
-    scraped_at: datetime = Field(default_factory=datetime.utcnow)
-    transport_cost: Optional[float] = None
-    est_profit: Optional[float] = None
-    roi_percent: Optional[float] = None
-    flip_score: Optional[float] = None
-    status: ListingStatus = ListingStatus.NEW
-    notes: Optional[str] = None
-    images: List[str] = Field(default_factory=list)
 
 class VehicleCreate(BaseModel):
     make: str
