@@ -98,13 +98,61 @@ function App() {
     }
   };
 
-  const updateVehicleStatus = async (vehicleId, status) => {
+  const handleScrape = async () => {
+    if (!searchQuery.trim()) return;
+
     try {
-      await axios.put(`${API}/vehicles/${vehicleId}`, { status });
-      // Reload deals to reflect changes
-      loadDeals();
+      setScrapingLoading(true);
+      setScrapingStatus("Scraping live listings...");
+      
+      const response = await axios.post(`${API}/scrape/quick`, null, {
+        params: {
+          query: searchQuery,
+          location: filters.zipCode || "",
+          max_results: 15
+        }
+      });
+      
+      setScrapingStatus(`Found ${response.data.vehicles_found} live vehicles in ${response.data.duration.toFixed(1)}s`);
+      
+      // Add scraped vehicles to current results
+      if (response.data.vehicles && response.data.vehicles.length > 0) {
+        const scrapedVehicles = response.data.vehicles.map(v => ({
+          ...v,
+          seller_type: v.seller_type || 'unknown',
+          source: v.source || 'unknown',
+          status: v.status || 'new'
+        }));
+        setVehicles(prev => [...scrapedVehicles, ...prev]);
+      }
+      
     } catch (error) {
-      console.error("Error updating vehicle:", error);
+      console.error("Error scraping:", error);
+      setScrapingStatus("Scraping failed. Please try again.");
+    } finally {
+      setScrapingLoading(false);
+      setTimeout(() => setScrapingStatus(null), 5000);
+    }
+  };
+
+  const testScrapers = async () => {
+    try {
+      const response = await axios.get(`${API}/scrape/test`);
+      console.log("Scraper status:", response.data);
+      
+      const workingScrapers = Object.entries(response.data)
+        .filter(([source, working]) => working)
+        .map(([source]) => source);
+      
+      if (workingScrapers.length > 0) {
+        setScrapingStatus(`Working scrapers: ${workingScrapers.join(', ')}`);
+      } else {
+        setScrapingStatus("No scrapers are currently working");
+      }
+      
+      setTimeout(() => setScrapingStatus(null), 5000);
+    } catch (error) {
+      console.error("Error testing scrapers:", error);
     }
   };
 
