@@ -151,6 +151,16 @@ function App() {
   // Apply sorting and filtering to vehicles
   const processedVehicles = sortVehicles(filterVehicles(vehicles));
 
+  const updateVehicleStatus = async (vehicleId, status) => {
+    try {
+      await axios.put(`${API}/vehicles/${vehicleId}`, { status });
+      // Reload deals to reflect changes
+      loadDeals();
+    } catch (error) {
+      console.error("Error updating vehicle:", error);
+    }
+  };
+
   const handleScrape = async () => {
     if (!searchQuery.trim()) return;
 
