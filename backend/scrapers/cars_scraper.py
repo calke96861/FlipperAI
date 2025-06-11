@@ -66,7 +66,14 @@ class CarsScraper(BaseScraper):
         }
         
         if query:
-            params['keyword'] = query
+            # For queries starting with a year, try to be smarter about the search
+            query_parts = query.strip().split()
+            if len(query_parts) >= 2 and query_parts[0].isdigit() and len(query_parts[0]) == 4:
+                # Year-based search like "2021 ram trx" - remove year for broader results
+                search_query = " ".join(query_parts[1:])
+                params['keyword'] = search_query
+            else:
+                params['keyword'] = query
         
         if location:
             params['zip'] = location
