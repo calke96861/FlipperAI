@@ -19,7 +19,7 @@ from fake_useragent import UserAgent
 from playwright.async_api import async_playwright, Browser, Page
 import httpx
 
-from ..server import Source, SellerType
+from ..models import Source, SellerType
 
 logger = logging.getLogger(__name__)
 
