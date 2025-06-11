@@ -344,6 +344,12 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search Section */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">🚗 Vehicle Search</h3>
+            <div className="text-sm text-gray-600">
+              <span className="text-blue-600">🔵 Database</span> | <span className="text-green-600">🟢 Live Scraping</span>
+            </div>
+          </div>
           <div className="flex items-center space-x-4 mb-4">
             <div className="flex-1 flex">
               <input
