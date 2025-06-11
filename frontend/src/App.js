@@ -755,7 +755,7 @@ function App() {
             )}
 
             {/* Quick Filter Pills */}
-            <div className="flex flex-wrap gap-3 justify-center">
+            <div className="flex flex-wrap gap-3 justify-center mb-4">
               <button
                 onClick={() => { setSortBy("est_profit"); setSortOrder("desc"); }}
                 className="pill pill-success hover:scale-105 cursor-pointer transition-transform"
@@ -785,6 +785,33 @@ function App() {
                 className="pill pill-success hover:scale-105 cursor-pointer transition-transform"
               >
                 ⚡ Newest
+              </button>
+            </div>
+            
+            {/* Advanced Scraping Options */}
+            <div className="flex flex-wrap gap-2 justify-center">
+              <button
+                onClick={handleScrapePrivateParty}
+                disabled={scrapingLoading || !searchQuery.trim()}
+                className="btn-secondary body-small flex items-center space-x-1 disabled:opacity-50"
+                title="Search private party listings for best deals"
+              >
+                🏠 Private Party
+              </button>
+              <button
+                onClick={handleScrapeEnthusiast}
+                disabled={scrapingLoading || !searchQuery.trim()}
+                className="btn-secondary body-small flex items-center space-x-1 disabled:opacity-50"
+                title="Search auction and enthusiast platforms"
+              >
+                🏆 Auctions
+              </button>
+              <button
+                onClick={() => window.open('/sources', '_blank')}
+                className="btn-secondary body-small flex items-center space-x-1"
+                title="View all 22 data sources"
+              >
+                📊 All Sources
               </button>
             </div>
 
