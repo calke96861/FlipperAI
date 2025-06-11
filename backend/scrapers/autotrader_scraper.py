@@ -6,7 +6,7 @@ Scrapes vehicle listings from AutoTrader.com
 import logging
 import re
 from typing import List, Optional
-from urllib.parse import urlencode, urlparse, parse_qs
+from urllib.parse import urlencode, urlparse, parse_qs, urljoin
 from bs4 import BeautifulSoup
 
 from .base_scraper import BaseScraper, VehicleData
