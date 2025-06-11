@@ -127,18 +127,15 @@ function App() {
       
       // Add scraped vehicles to current results
       if (response.data.vehicles && response.data.vehicles.length > 0) {
-        console.log("Scraped vehicles raw:", response.data.vehicles);
         const scrapedVehicles = response.data.vehicles.map(v => ({
           ...v,
           seller_type: v.seller_type || 'unknown',
           source: v.source || 'unknown',
           status: v.status || 'new'
         }));
-        console.log("Processed scraped vehicles:", scrapedVehicles);
         // Show only scraped results for better UX
         setVehicles(scrapedVehicles);
       } else {
-        console.log("No vehicles in response:", response.data);
         setVehicles([]);
       }
       
