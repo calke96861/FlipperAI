@@ -357,7 +357,7 @@ function App() {
               <button
                 onClick={handleSearch}
                 className="px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center"
-                title="Search Database"
+                title="🔵 DATABASE SEARCH: Search saved vehicles in database"
               >
                 <Search className="h-5 w-5" />
               </button>
