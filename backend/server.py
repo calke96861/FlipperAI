@@ -461,7 +461,7 @@ async def quick_scrape(query: str, location: str = "", max_results: int = 10):
             "location": location,
             "vehicles_found": len(result.vehicles),
             "duration": result.duration,
-            "vehicles": [vehicle.to_dict() for vehicle in result.vehicles[:10]],  # Return first 10
+            "vehicles": [process_scraped_vehicle(vehicle) for vehicle in result.vehicles[:10]],  # Return first 10
             "source_results": {k.value: v for k, v in result.source_results.items()}
         }
         
