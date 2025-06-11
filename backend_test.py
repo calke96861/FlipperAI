@@ -215,6 +215,157 @@ class FlipBotAPITester:
                 self.test_results["Newest Year Sorting Validation"] = {"success": False}
         
         return True
+    
+    def test_scraping_strategies(self):
+        """Test the different scraping strategies"""
+        print("\n🔍 Testing Multiple Scraping Strategies...")
+        
+        # Test 1: Quick Scrape - BMW M3
+        success, bmw_quick_scrape = self.run_test(
+            "Quick Scrape - BMW M3", 
+            "POST", 
+            "scrape/quick", 
+            params={"query": "BMW M3", "location": "90210", "max_results": 5}
+        )
+        
+        if success:
+            vehicles_found = bmw_quick_scrape.get("vehicles_found", 0)
+            print(f"Quick Scrape found {vehicles_found} BMW M3 vehicles")
+            
+            # Check if sources are from the quick scrape list
+            quick_sources = ["cars_com", "carmax", "carvana"]
+            sources_used = list(bmw_quick_scrape.get("source_results", {}).keys())
+            
+            quick_sources_used = any(source in quick_sources for source in sources_used)
+            if quick_sources_used:
+                print("✅ Quick Scrape used appropriate sources")
+                self.test_results["Quick Scrape Sources"] = {"success": True}
+            else:
+                print("❌ Quick Scrape did not use expected sources")
+                self.test_results["Quick Scrape Sources"] = {"success": False}
+        
+        # Test 2: Comprehensive Scrape - BMW M3
+        success, bmw_comprehensive_scrape = self.run_test(
+            "Comprehensive Scrape - BMW M3", 
+            "POST", 
+            "scrape/comprehensive", 
+            params={"query": "BMW M3", "location": "90210", "max_results": 5}
+        )
+        
+        if success:
+            vehicles_found = bmw_comprehensive_scrape.get("vehicles_found", 0)
+            print(f"Comprehensive Scrape found {vehicles_found} BMW M3 vehicles")
+            
+            # Check if categories are used
+            categories = bmw_comprehensive_scrape.get("categories_used", [])
+            if categories and len(categories) >= 2:
+                print(f"✅ Comprehensive Scrape used categories: {', '.join(categories)}")
+                self.test_results["Comprehensive Scrape Categories"] = {"success": True}
+            else:
+                print("❌ Comprehensive Scrape did not use expected categories")
+                self.test_results["Comprehensive Scrape Categories"] = {"success": False}
+        
+        # Test 3: Enthusiast Scrape - Porsche 911
+        success, porsche_enthusiast_scrape = self.run_test(
+            "Enthusiast Scrape - Porsche 911", 
+            "POST", 
+            "scrape/enthusiast", 
+            params={"query": "Porsche 911", "max_results": 5}
+        )
+        
+        if success:
+            vehicles_found = porsche_enthusiast_scrape.get("vehicles_found", 0)
+            print(f"Enthusiast Scrape found {vehicles_found} Porsche 911 vehicles")
+            
+            # Check if categories are used
+            categories = porsche_enthusiast_scrape.get("categories_used", [])
+            if "auction" in categories or "enthusiast" in categories:
+                print(f"✅ Enthusiast Scrape used appropriate categories: {', '.join(categories)}")
+                self.test_results["Enthusiast Scrape Categories"] = {"success": True}
+            else:
+                print("❌ Enthusiast Scrape did not use expected categories")
+                self.test_results["Enthusiast Scrape Categories"] = {"success": False}
+        
+        # Test 4: Private Party Scrape - Ford Raptor
+        success, raptor_private_scrape = self.run_test(
+            "Private Party Scrape - Ford Raptor", 
+            "POST", 
+            "scrape/private-party", 
+            params={"query": "Ford Raptor", "location": "90210", "max_results": 5}
+        )
+        
+        if success:
+            vehicles_found = raptor_private_scrape.get("vehicles_found", 0)
+            print(f"Private Party Scrape found {vehicles_found} Ford Raptor vehicles")
+            
+            # Check if categories are used
+            categories = raptor_private_scrape.get("categories_used", [])
+            if "marketplace" in categories:
+                print(f"✅ Private Party Scrape used marketplace category")
+                self.test_results["Private Party Scrape Category"] = {"success": True}
+            else:
+                print("❌ Private Party Scrape did not use marketplace category")
+                self.test_results["Private Party Scrape Category"] = {"success": False}
+        
+        return True
+    
+    def test_available_sources(self):
+        """Test the available sources endpoint"""
+        print("\n🔍 Testing Available Sources Endpoint...")
+        
+        success, sources_data = self.run_test("Get Available Sources", "GET", "scrape/sources")
+        
+        if success:
+            # Check if we have all the expected categories
+            expected_categories = [
+                "retail_platforms", 
+                "online_retailers", 
+                "marketplace_platforms", 
+                "enthusiast_auction", 
+                "analytics_platforms", 
+                "dealer_networks", 
+                "valuation_services"
+            ]
+            
+            categories_found = list(sources_data.keys())
+            all_categories_present = all(category in categories_found for category in expected_categories)
+            
+            if all_categories_present:
+                print(f"✅ All expected source categories are present")
+                self.test_results["Source Categories"] = {"success": True}
+            else:
+                missing = [cat for cat in expected_categories if cat not in categories_found]
+                print(f"❌ Missing source categories: {', '.join(missing)}")
+                self.test_results["Source Categories"] = {"success": False}
+            
+            # Count total sources
+            total_sources = sum(len(sources) for sources in sources_data.values())
+            print(f"Total sources available: {total_sources}")
+            
+            if total_sources >= 22:
+                print(f"✅ At least 22 sources are available")
+                self.test_results["Source Count"] = {"success": True}
+            else:
+                print(f"❌ Only {total_sources} sources found, expected at least 22")
+                self.test_results["Source Count"] = {"success": False}
+            
+            # Check for specific important sources
+            important_sources = ["cars_com", "autotrader", "cargurus", "facebook", "bring_a_trailer"]
+            found_sources = []
+            
+            for category in sources_data.values():
+                for source in category:
+                    if source.get("source") in important_sources:
+                        found_sources.append(source.get("source"))
+            
+            if len(found_sources) >= 3:
+                print(f"✅ Found important sources: {', '.join(found_sources)}")
+                self.test_results["Important Sources"] = {"success": True}
+            else:
+                print(f"❌ Missing important sources. Only found: {', '.join(found_sources)}")
+                self.test_results["Important Sources"] = {"success": False}
+        
+        return True
 
 def main():
     # Get the backend URL from the frontend .env file
@@ -279,44 +430,51 @@ def main():
             print("❌ Some trending items are missing required data")
             tester.test_results["Trending Data Validation"] = {"success": False}
     
-    # Test 7: Live Scraping - Ford Raptor (testing the main feature mentioned in the request)
-    print("\n🔍 Testing Live Scraping for Ford Raptor...")
-    success, raptor_scrape_data = tester.run_test(
-        "Ford Raptor Live Scrape", 
+    # Test 7: Test the available sources endpoint
+    tester.test_available_sources()
+    
+    # Test 8: Test the different scraping strategies
+    tester.test_scraping_strategies()
+    
+    # Test 9: Comprehensive BMW M3 Search with Location
+    print("\n🔍 Testing Comprehensive BMW M3 Search with Location...")
+    success, bmw_m3_data = tester.run_test(
+        "BMW M3 Comprehensive Search", 
         "POST", 
-        "scrape/quick", 
-        params={"query": "Ford Raptor", "max_results": 5}
+        "scrape/comprehensive", 
+        params={"query": "BMW M3", "location": "90210", "max_results": 10}
     )
     
-    if success and raptor_scrape_data:
-        vehicles_found = raptor_scrape_data.get("vehicles_found", 0)
-        vehicles = raptor_scrape_data.get("vehicles", [])
+    if success and bmw_m3_data:
+        vehicles_found = bmw_m3_data.get("vehicles_found", 0)
+        vehicles = bmw_m3_data.get("vehicles", [])
         
-        print(f"Found {vehicles_found} Ford Raptor vehicles")
+        print(f"Found {vehicles_found} BMW M3 vehicles")
         
         if vehicles:
-            for i, vehicle in enumerate(vehicles):
+            for i, vehicle in enumerate(vehicles[:3]):  # Show first 3 vehicles
                 print(f"\nVehicle {i+1}:")
                 print(f"  Make/Model: {vehicle.get('year')} {vehicle.get('make')} {vehicle.get('model')} {vehicle.get('trim', '')}")
                 print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
                 print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
                 print(f"  Location: {vehicle.get('location', 'N/A')}")
+                print(f"  Source: {vehicle.get('source', 'N/A')}")
                 print(f"  Est. Profit: ${vehicle.get('est_profit', 'N/A')}")
                 print(f"  ROI: {vehicle.get('roi_percent', 'N/A')}%")
                 print(f"  Flip Score: {vehicle.get('flip_score', 'N/A')}/10")
                 
                 # Validate vehicle data
-                tester.validate_vehicle_data(vehicle, "Ford Raptor")
+                tester.validate_vehicle_data(vehicle, "BMW M3")
             
-            # Test is successful if we found at least 1 Ford Raptor
+            # Test is successful if we found at least 1 BMW M3
             if len(vehicles) >= 1:
-                print("✅ Ford Raptor search test PASSED")
+                print("✅ BMW M3 comprehensive search test PASSED")
                 tester.tests_passed += 1
             else:
-                print("❌ Ford Raptor search test FAILED - Not enough matching vehicles found")
+                print("❌ BMW M3 comprehensive search test FAILED - Not enough matching vehicles found")
             
             tester.tests_run += 1
-            tester.test_results["Ford Raptor Search Validation"] = {
+            tester.test_results["BMW M3 Comprehensive Search Validation"] = {
                 "success": len(vehicles) >= 1
             }
     
