@@ -34,6 +34,8 @@ function App() {
     minProfit: ""
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [scrapingStatus, setScrapingStatus] = useState(null);
+  const [scrapingLoading, setScrapingLoading] = useState(false);
 
   // Load initial data
   useEffect(() => {
