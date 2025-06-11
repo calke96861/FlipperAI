@@ -146,11 +146,19 @@ class MarketTrend(BaseModel):
     total_listings: int
     avg_days_on_market: Optional[int] = None
 
-class DealOpportunity(BaseModel):
-    vehicle: Vehicle
-    opportunity_score: float
-    profit_potential: float
-    market_comparison: str
+class ScrapingJobCreate(BaseModel):
+    query: str
+    location: Optional[str] = ""
+    max_results_per_source: Optional[int] = 20
+    sources: Optional[List[Source]] = None
+
+class ScrapingJobResponse(BaseModel):
+    job_id: str
+    status: str
+    message: str
+    vehicles_found: Optional[int] = None
+    duration: Optional[float] = None
+    source_results: Optional[Dict[str, int]] = None
 
 # Helper Functions
 def calculate_market_metrics(vehicle: Vehicle) -> Vehicle:
