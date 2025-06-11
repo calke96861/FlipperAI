@@ -81,6 +81,36 @@ class FlipBotAPITester:
         print("="*50)
         return self.tests_passed == self.tests_run
 
+    def validate_vehicle_data(self, vehicle_data, search_query):
+        """Validate that vehicle data contains expected fields and values"""
+        if not vehicle_data:
+            print("❌ No vehicle data found")
+            return False
+            
+        # Check if the vehicle data contains the expected fields
+        required_fields = ["make", "model", "year", "asking_price", "location", "url"]
+        for field in required_fields:
+            if field not in vehicle_data:
+                print(f"❌ Missing required field: {field}")
+                return False
+                
+        # Check if the vehicle data matches the search query
+        query_terms = search_query.lower().split()
+        vehicle_name = f"{vehicle_data.get('make', '')} {vehicle_data.get('model', '')} {vehicle_data.get('trim', '')}".lower()
+        
+        match_found = any(term in vehicle_name for term in query_terms)
+        if not match_found:
+            print(f"❌ Vehicle {vehicle_name} does not match search query: {search_query}")
+            return False
+            
+        # Check if the vehicle has a valid price
+        if not vehicle_data.get("asking_price") or vehicle_data.get("asking_price") <= 0:
+            print("❌ Invalid vehicle price")
+            return False
+            
+        print(f"✅ Valid vehicle data found: {vehicle_data.get('year')} {vehicle_data.get('make')} {vehicle_data.get('model')} - {vehicle_data.get('asking_price')}")
+        return True
+
 def main():
     # Get the backend URL from the frontend .env file
     with open('/app/frontend/.env', 'r') as f:
@@ -97,34 +127,93 @@ def main():
     # Test 1: API Health Check
     tester.run_test("API Health Check", "GET", "")
     
-    # Test 2: Get Vehicles
-    success, vehicles_data = tester.run_test("Get Vehicles", "GET", "vehicles")
+    # Test 2: Test Scrapers Status
+    success, scraper_test_data = tester.run_test("Test Scrapers Status", "GET", "scrape/test")
     
-    # Test 3: Get Deals
-    success, deals_data = tester.run_test("Get Deals", "GET", "deals")
+    if success:
+        working_scrapers = [source for source, status in scraper_test_data.items() if status]
+        print(f"Working scrapers: {', '.join(working_scrapers)}")
     
-    # Test 4: Get Trending
-    success, trending_data = tester.run_test("Get Trending", "GET", "trending")
-    
-    # Test 5: Search Functionality
-    success, search_data = tester.run_test("Search Functionality", "GET", "search", params={"q": "BMW"})
-    
-    # Test 6: Get Stats
-    success, stats_data = tester.run_test("Get Stats", "GET", "stats")
-    
-    # Test 7: Test Scrapers
-    success, scraper_test_data = tester.run_test("Test Scrapers", "GET", "scrape/test")
-    
-    # Test 8: Quick Scrape
-    success, quick_scrape_data = tester.run_test(
-        "Quick Scrape", 
+    # Test 3: Live Scraping - RAM 1500 TRX
+    print("\n🔍 Testing Live Scraping for RAM 1500 TRX...")
+    success, ram_scrape_data = tester.run_test(
+        "RAM 1500 TRX Live Scrape", 
         "POST", 
         "scrape/quick", 
-        params={"query": "BMW", "location": "90210", "max_results": 5}
+        params={"query": "RAM 1500 TRX", "max_results": 3}
     )
     
-    # Test 9: Get Scraping Stats
-    success, scraping_stats_data = tester.run_test("Get Scraping Stats", "GET", "scrape/stats")
+    if success and ram_scrape_data:
+        vehicles_found = ram_scrape_data.get("vehicles_found", 0)
+        vehicles = ram_scrape_data.get("vehicles", [])
+        
+        print(f"Found {vehicles_found} RAM 1500 TRX vehicles")
+        
+        if vehicles:
+            for i, vehicle in enumerate(vehicles):
+                print(f"\nVehicle {i+1}:")
+                print(f"  Make/Model: {vehicle.get('year')} {vehicle.get('make')} {vehicle.get('model')} {vehicle.get('trim', '')}")
+                print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
+                print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
+                print(f"  Location: {vehicle.get('location', 'N/A')}")
+                print(f"  Dealer: {vehicle.get('seller_type', 'N/A')}")
+                print(f"  Source: {vehicle.get('source', 'N/A')}")
+                print(f"  URL: {vehicle.get('url', 'N/A')}")
+                
+                # Validate vehicle data
+                tester.validate_vehicle_data(vehicle, "RAM 1500 TRX")
+    
+    # Test 4: Live Scraping - BMW M3
+    print("\n🔍 Testing Live Scraping for BMW M3...")
+    success, bmw_scrape_data = tester.run_test(
+        "BMW M3 Live Scrape", 
+        "POST", 
+        "scrape/quick", 
+        params={"query": "BMW M3", "max_results": 3}
+    )
+    
+    if success and bmw_scrape_data:
+        vehicles_found = bmw_scrape_data.get("vehicles_found", 0)
+        vehicles = bmw_scrape_data.get("vehicles", [])
+        
+        print(f"Found {vehicles_found} BMW M3 vehicles")
+        
+        if vehicles:
+            for i, vehicle in enumerate(vehicles):
+                print(f"\nVehicle {i+1}:")
+                print(f"  Make/Model: {vehicle.get('year')} {vehicle.get('make')} {vehicle.get('model')} {vehicle.get('trim', '')}")
+                print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
+                print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
+                print(f"  Location: {vehicle.get('location', 'N/A')}")
+                
+                # Validate vehicle data
+                tester.validate_vehicle_data(vehicle, "BMW M3")
+    
+    # Test 5: Live Scraping - Porsche 911
+    print("\n🔍 Testing Live Scraping for Porsche 911...")
+    success, porsche_scrape_data = tester.run_test(
+        "Porsche 911 Live Scrape", 
+        "POST", 
+        "scrape/quick", 
+        params={"query": "Porsche 911", "max_results": 3}
+    )
+    
+    if success and porsche_scrape_data:
+        vehicles_found = porsche_scrape_data.get("vehicles_found", 0)
+        vehicles = porsche_scrape_data.get("vehicles", [])
+        
+        print(f"Found {vehicles_found} Porsche 911 vehicles")
+        
+        if vehicles:
+            for i, vehicle in enumerate(vehicles):
+                print(f"\nVehicle {i+1}:")
+                print(f"  Make/Model: {vehicle.get('year')} {vehicle.get('make')} {vehicle.get('model')} {vehicle.get('trim', '')}")
+                print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
+                print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
+                print(f"  Location: {vehicle.get('location', 'N/A')}")
+                
+                # Validate vehicle data
+                tester.validate_vehicle_data(vehicle, "Porsche 911")
     
     # Print summary
     return tester.print_summary()
