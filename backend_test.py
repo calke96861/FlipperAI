@@ -134,7 +134,77 @@ def main():
         working_scrapers = [source for source, status in scraper_test_data.items() if status]
         print(f"Working scrapers: {', '.join(working_scrapers)}")
     
-    # Test 3: Live Scraping - 2021 RAM TRX (The main test case for the fix)
+    # Test 3: Live Scraping - 2024 TRX (The main test case for the fix)
+    print("\n🔍 Testing Live Scraping for 2024 TRX...")
+    success, ram_trx_2024_scrape_data = tester.run_test(
+        "2024 TRX Live Scrape", 
+        "POST", 
+        "scrape/quick", 
+        params={"query": "2024 trx", "max_results": 5}
+    )
+    
+    if success and ram_trx_2024_scrape_data:
+        vehicles_found = ram_trx_2024_scrape_data.get("vehicles_found", 0)
+        vehicles = ram_trx_2024_scrape_data.get("vehicles", [])
+        
+        print(f"Found {vehicles_found} 2024 TRX vehicles")
+        
+        if vehicles:
+            trx_count = 0
+            ram_count = 0
+            correct_year_count = 0
+            
+            for i, vehicle in enumerate(vehicles):
+                print(f"\nVehicle {i+1}:")
+                print(f"  Make/Model: {vehicle.get('year')} {vehicle.get('make')} {vehicle.get('model')} {vehicle.get('trim', '')}")
+                print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
+                print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
+                print(f"  Location: {vehicle.get('location', 'N/A')}")
+                print(f"  Dealer: {vehicle.get('seller_type', 'N/A')}")
+                print(f"  Source: {vehicle.get('source', 'N/A')}")
+                print(f"  URL: {vehicle.get('url', 'N/A')}")
+                print(f"  Est. Profit: ${vehicle.get('est_profit', 'N/A')}")
+                print(f"  ROI: {vehicle.get('roi_percent', 'N/A')}%")
+                
+                # Count RAM vehicles
+                if vehicle.get('make', '').lower() == 'ram':
+                    ram_count += 1
+                
+                # Count TRX models
+                model_trim = f"{vehicle.get('model', '')} {vehicle.get('trim', '')}".lower()
+                if 'trx' in model_trim:
+                    trx_count += 1
+                
+                # Count vehicles from 2024
+                year = vehicle.get('year')
+                if year and year == 2024:
+                    correct_year_count += 1
+                
+                # Validate vehicle data
+                tester.validate_vehicle_data(vehicle, "2024 trx")
+            
+            print(f"\nSummary of 2024 TRX search:")
+            print(f"  Total vehicles found: {vehicles_found}")
+            print(f"  RAM vehicles: {ram_count}/{len(vehicles)}")
+            print(f"  TRX models: {trx_count}/{len(vehicles)}")
+            print(f"  2024 models: {correct_year_count}/{len(vehicles)}")
+            
+            # Test is successful if we found at least 1 2024 RAM TRX vehicle
+            if ram_count >= 1 and trx_count >= 1 and correct_year_count >= 1:
+                print("✅ 2024 TRX search test PASSED")
+                tester.tests_passed += 1
+            else:
+                print("❌ 2024 TRX search test FAILED - Not enough matching vehicles found")
+            
+            tester.tests_run += 1
+            tester.test_results["2024 TRX Search Validation"] = {
+                "success": ram_count >= 1 and trx_count >= 1 and correct_year_count >= 1,
+                "ram_count": ram_count,
+                "trx_count": trx_count,
+                "correct_year_count": correct_year_count
+            }
+    
+    # Test 4: Live Scraping - 2021 RAM TRX (The main test case for the fix)
     print("\n🔍 Testing Live Scraping for 2021 RAM TRX...")
     success, ram_trx_scrape_data = tester.run_test(
         "2021 RAM TRX Live Scrape", 
