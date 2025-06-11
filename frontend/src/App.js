@@ -670,23 +670,41 @@ function App() {
             </div>
           </div>
 
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="text-gray-600 mt-4">Loading vehicles...</p>
-            </div>
-          ) : processedVehicles.length === 0 ? (
-            <div className="text-center py-12">
-              <Car className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No vehicles found. Try adjusting your search or filters.</p>
-            </div>
-          ) : (
-            <div className={viewMode === "grid" ? "grid grid-cols-1 lg:grid-cols-2 gap-6" : "space-y-4"}>
-              {processedVehicles.map((vehicle) => (
-                <VehicleCard key={vehicle.id} vehicle={vehicle} />
-              ))}
-            </div>
-          )}
+  const LoadingSkeleton = () => (
+    <div className="card p-6 h-80">
+      <div className="flex justify-between items-start mb-4">
+        <div className="flex-1">
+          <div className="skeleton h-6 w-48 mb-2 rounded"></div>
+          <div className="skeleton h-4 w-32 mb-3 rounded"></div>
+          <div className="flex space-x-4">
+            <div className="skeleton h-4 w-20 rounded"></div>
+            <div className="skeleton h-4 w-24 rounded"></div>
+          </div>
+        </div>
+        <div className="skeleton h-6 w-20 rounded-full"></div>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="skeleton h-16 rounded-xl"></div>
+        <div className="skeleton h-16 rounded-xl"></div>
+      </div>
+      
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="skeleton h-12 rounded-lg"></div>
+        <div className="skeleton h-12 rounded-lg"></div>
+        <div className="skeleton h-12 rounded-lg"></div>
+      </div>
+      
+      <div className="flex justify-between items-center">
+        <div className="skeleton h-6 w-16 rounded-full"></div>
+        <div className="flex space-x-2">
+          <div className="skeleton h-8 w-8 rounded-lg"></div>
+          <div className="skeleton h-8 w-8 rounded-lg"></div>
+          <div className="skeleton h-8 w-20 rounded-lg"></div>
+        </div>
+      </div>
+    </div>
+  );
         </section>
       </main>
     </div>
