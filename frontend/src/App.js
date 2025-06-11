@@ -104,10 +104,16 @@ function App() {
 
   const sortVehicles = (vehicleList) => {
     return [...vehicleList].sort((a, b) => {
-      let aVal = a[sortBy] || 0;
-      let bVal = b[sortBy] || 0;
+      let aVal = a[sortBy];
+      let bVal = b[sortBy];
       
-      if (sortBy === "asking_price" || sortBy === "est_profit" || sortBy === "roi_percent" || sortBy === "flip_score") {
+      // Handle null/undefined values
+      if (aVal == null && bVal == null) return 0;
+      if (aVal == null) return sortOrder === "desc" ? 1 : -1;
+      if (bVal == null) return sortOrder === "desc" ? -1 : 1;
+      
+      // Convert to numbers for numeric fields
+      if (sortBy === "asking_price" || sortBy === "est_profit" || sortBy === "roi_percent" || sortBy === "flip_score" || sortBy === "year" || sortBy === "mileage") {
         aVal = parseFloat(aVal) || 0;
         bVal = parseFloat(bVal) || 0;
       }
