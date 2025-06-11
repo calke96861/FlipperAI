@@ -110,6 +110,111 @@ class FlipBotAPITester:
             
         print(f"✅ Valid vehicle data found: {vehicle_data.get('year')} {vehicle_data.get('make')} {vehicle_data.get('model')} - {vehicle_data.get('asking_price')}")
         return True
+        
+    def test_sorting_filtering(self):
+        """Test the sorting and filtering functionality"""
+        print("\n🔍 Testing Sorting and Filtering Features...")
+        
+        # Test 1: High Profit Sorting
+        success, high_profit_data = self.run_test(
+            "High Profit Sorting", 
+            "GET", 
+            "vehicles", 
+            params={"skip": 0, "limit": 10, "sort_by": "est_profit", "sort_order": "desc"}
+        )
+        
+        if success and high_profit_data:
+            # Verify sorting is correct
+            is_sorted = all(high_profit_data[i].get('est_profit', 0) >= high_profit_data[i+1].get('est_profit', 0) 
+                           for i in range(len(high_profit_data)-1))
+            
+            if is_sorted and len(high_profit_data) > 0:
+                print("✅ High Profit sorting works correctly")
+                self.test_results["High Profit Sorting Validation"] = {"success": True}
+            else:
+                print("❌ High Profit sorting failed - Results not properly sorted")
+                self.test_results["High Profit Sorting Validation"] = {"success": False}
+        
+        # Test 2: High ROI Sorting
+        success, high_roi_data = self.run_test(
+            "High ROI Sorting", 
+            "GET", 
+            "vehicles", 
+            params={"skip": 0, "limit": 10, "sort_by": "roi_percent", "sort_order": "desc"}
+        )
+        
+        if success and high_roi_data:
+            # Verify sorting is correct
+            is_sorted = all(high_roi_data[i].get('roi_percent', 0) >= high_roi_data[i+1].get('roi_percent', 0) 
+                           for i in range(len(high_roi_data)-1))
+            
+            if is_sorted and len(high_roi_data) > 0:
+                print("✅ High ROI sorting works correctly")
+                self.test_results["High ROI Sorting Validation"] = {"success": True}
+            else:
+                print("❌ High ROI sorting failed - Results not properly sorted")
+                self.test_results["High ROI Sorting Validation"] = {"success": False}
+        
+        # Test 3: Under $50K Filtering
+        success, under_50k_data = self.run_test(
+            "Under $50K Filtering", 
+            "GET", 
+            "vehicles", 
+            params={"skip": 0, "limit": 10, "price_max": 50000}
+        )
+        
+        if success and under_50k_data:
+            # Verify all vehicles are under $50K
+            all_under_50k = all(vehicle.get('asking_price', 0) <= 50000 for vehicle in under_50k_data)
+            
+            if all_under_50k:
+                print("✅ Under $50K filtering works correctly")
+                self.test_results["Under $50K Filtering Validation"] = {"success": True}
+            else:
+                print("❌ Under $50K filtering failed - Some vehicles are over $50K")
+                self.test_results["Under $50K Filtering Validation"] = {"success": False}
+        
+        # Test 4: Low Mileage Sorting
+        success, low_mileage_data = self.run_test(
+            "Low Mileage Sorting", 
+            "GET", 
+            "vehicles", 
+            params={"skip": 0, "limit": 10, "sort_by": "mileage", "sort_order": "asc"}
+        )
+        
+        if success and low_mileage_data:
+            # Verify sorting is correct
+            is_sorted = all(low_mileage_data[i].get('mileage', 0) <= low_mileage_data[i+1].get('mileage', 0) 
+                           for i in range(len(low_mileage_data)-1))
+            
+            if is_sorted and len(low_mileage_data) > 0:
+                print("✅ Low Mileage sorting works correctly")
+                self.test_results["Low Mileage Sorting Validation"] = {"success": True}
+            else:
+                print("❌ Low Mileage sorting failed - Results not properly sorted")
+                self.test_results["Low Mileage Sorting Validation"] = {"success": False}
+        
+        # Test 5: Newest Year Sorting
+        success, newest_year_data = self.run_test(
+            "Newest Year Sorting", 
+            "GET", 
+            "vehicles", 
+            params={"skip": 0, "limit": 10, "sort_by": "year", "sort_order": "desc"}
+        )
+        
+        if success and newest_year_data:
+            # Verify sorting is correct
+            is_sorted = all(newest_year_data[i].get('year', 0) >= newest_year_data[i+1].get('year', 0) 
+                           for i in range(len(newest_year_data)-1))
+            
+            if is_sorted and len(newest_year_data) > 0:
+                print("✅ Newest Year sorting works correctly")
+                self.test_results["Newest Year Sorting Validation"] = {"success": True}
+            else:
+                print("❌ Newest Year sorting failed - Results not properly sorted")
+                self.test_results["Newest Year Sorting Validation"] = {"success": False}
+        
+        return True
 
 def main():
     # Get the backend URL from the frontend .env file
