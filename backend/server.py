@@ -30,6 +30,26 @@ app = FastAPI(title="FlipBot AI - Premium Vehicle Intelligence", version="1.0.0"
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Initialize scraping manager
+scraping_manager = None
+
+@app.on_event("startup")
+async def startup_event():
+    global scraping_manager
+    scraping_manager = ScrapingManager(db)
+    try:
+        await scraping_manager.initialize_scrapers()
+        logger.info("Scraping system initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize scraping system: {e}")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    global scraping_manager
+    if scraping_manager:
+        await scraping_manager.cleanup_scrapers()
+    client.close()
+
 # Enums for vehicle data
 class SellerType(str, Enum):
     PRIVATE = "private"
