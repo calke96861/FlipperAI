@@ -243,12 +243,12 @@ function App() {
 
   const getStatusColor = (status) => {
     const colors = {
-      new: "bg-blue-100 text-blue-800",
-      watching: "bg-yellow-100 text-yellow-800",
-      contacted: "bg-purple-100 text-purple-800",
-      negotiating: "bg-orange-100 text-orange-800",
-      purchased: "bg-green-100 text-green-800",
-      passed: "bg-gray-100 text-gray-800"
+      new: "pill-primary",
+      watching: "pill-warning", 
+      contacted: "pill-accent",
+      negotiating: "pill-warning",
+      purchased: "pill-success",
+      passed: "bg-gray-100 text-gray-600"
     };
     return colors[status] || colors.new;
   };
