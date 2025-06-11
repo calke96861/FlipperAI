@@ -30,13 +30,39 @@ class ScrapingJob:
     location: str = ""
     max_results_per_source: int = 20
     sources: List[Source] = None
+    source_categories: List[str] = None  # e.g., ["retail", "marketplace", "auction"]
     created_at: datetime = None
     
     def __post_init__(self):
         if self.created_at is None:
             self.created_at = datetime.utcnow()
-        if self.sources is None:
-            self.sources = [Source.AUTOTRADER, Source.CARS_COM, Source.CARGURUS, Source.CRAIGSLIST]
+        if self.sources is None and self.source_categories is None:
+            # Default to most reliable sources
+            self.sources = [
+                Source.CARS_COM, Source.AUTOTRADER, Source.CARGURUS,
+                Source.CARMAX, Source.CARVANA, Source.CRAIGSLIST, Source.FACEBOOK
+            ]
+        elif self.source_categories and not self.sources:
+            self.sources = self._get_sources_by_categories()
+    
+    def _get_sources_by_categories(self) -> List[Source]:
+        """Get sources based on categories"""
+        category_map = {
+            "retail": [Source.CARS_COM, Source.AUTOTRADER, Source.CARGURUS, Source.CARMAX, Source.CARVANA, Source.VROOM, Source.SHIFT],
+            "marketplace": [Source.FACEBOOK, Source.CRAIGSLIST],
+            "auction": [Source.BRING_A_TRAILER, Source.CARS_AND_BIDS, Source.EBAY_MOTORS],
+            "analytics": [Source.ISEECARS, Source.CAREDGE, Source.TRUECAR],
+            "enthusiast": [Source.BRING_A_TRAILER, Source.CARS_AND_BIDS, Source.HEMMINGS],
+            "dealer_network": [Source.AUTONATION],
+            "valuation": [Source.KBB, Source.EDMUNDS, Source.PEDDLE]
+        }
+        
+        sources = []
+        for category in self.source_categories:
+            if category in category_map:
+                sources.extend(category_map[category])
+        
+        return list(set(sources))  # Remove duplicates
 
 @dataclass
 class ScrapingResult:
