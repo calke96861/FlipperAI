@@ -83,7 +83,17 @@ function App() {
     loadDeals();
     loadTrending();
     loadStats();
+    loadAvailableSources();
   }, []);
+
+  const loadAvailableSources = async () => {
+    try {
+      const response = await axios.get(`${API}/scrape/sources`);
+      setAvailableSources(response.data);
+    } catch (error) {
+      console.error("Error loading sources:", error);
+    }
+  };
 
   const loadDeals = async () => {
     try {
