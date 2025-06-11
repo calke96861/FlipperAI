@@ -241,21 +241,21 @@ function App() {
             <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
               <span className="flex items-center">
                 <Car className="h-4 w-4 mr-1" />
-                {vehicle.mileage?.toLocaleString()} mi
+                {vehicle.mileage ? vehicle.mileage.toLocaleString() : 'N/A'} mi
               </span>
               <span className="flex items-center">
                 <MapPin className="h-4 w-4 mr-1" />
-                {vehicle.location}
+                {vehicle.location || 'Unknown'}
               </span>
             </div>
           </div>
           <div className="text-right">
             <div className="flex items-center space-x-1">
               <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                {vehicle.source.replace('_', '.')}
+                {vehicle.source ? vehicle.source.replace('_', '.') : 'unknown'}
               </span>
             </div>
-            <p className="text-xs text-gray-500 mt-1">{vehicle.seller_type}</p>
+            <p className="text-xs text-gray-500 mt-1">{vehicle.seller_type || 'unknown'}</p>
           </div>
         </div>
 
