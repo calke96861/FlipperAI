@@ -129,10 +129,8 @@ class CarsScraper(BaseScraper):
         try:
             # Extract title/vehicle info
             title_text = self.extract_with_fallback(listing_element, self.selectors['title'])
-            logger.info(f"Cars.com title extracted: '{title_text}'")
             if title_text:
                 year, make, model = self.extract_year_make_model(title_text)
-                logger.info(f"Parsed: year={year}, make={make}, model={model}")
                 vehicle.year = year
                 vehicle.make = make
                 vehicle.model = model
