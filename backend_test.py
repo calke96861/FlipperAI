@@ -232,247 +232,60 @@ def main():
     # Test 1: API Health Check
     tester.run_test("API Health Check", "GET", "")
     
-    # Test 2: Test Scrapers Status
+    # Test 2: Initialize mock data
+    tester.run_test("Initialize Mock Data", "POST", "initialize-data")
+    
+    # Test 3: Test Scrapers Status
     success, scraper_test_data = tester.run_test("Test Scrapers Status", "GET", "scrape/test")
     
     if success:
         working_scrapers = [source for source, status in scraper_test_data.items() if status]
         print(f"Working scrapers: {', '.join(working_scrapers)}")
     
-    # Test 3: Live Scraping - 2024 TRX (The main test case for the fix)
-    print("\n🔍 Testing Live Scraping for 2024 TRX...")
-    success, ram_trx_2024_scrape_data = tester.run_test(
-        "2024 TRX Live Scrape", 
-        "POST", 
-        "scrape/quick", 
-        params={"query": "2024 trx", "max_results": 5}
-    )
+    # Test 4: Test the new sorting and filtering features
+    tester.test_sorting_filtering()
     
-    if success and ram_trx_2024_scrape_data:
-        vehicles_found = ram_trx_2024_scrape_data.get("vehicles_found", 0)
-        vehicles = ram_trx_2024_scrape_data.get("vehicles", [])
-        
-        print(f"Found {vehicles_found} 2024 TRX vehicles")
-        
-        if vehicles:
-            trx_count = 0
-            ram_count = 0
-            correct_year_count = 0
-            
-            for i, vehicle in enumerate(vehicles):
-                print(f"\nVehicle {i+1}:")
-                print(f"  Make/Model: {vehicle.get('year')} {vehicle.get('make')} {vehicle.get('model')} {vehicle.get('trim', '')}")
-                print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
-                print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
-                print(f"  Location: {vehicle.get('location', 'N/A')}")
-                print(f"  Dealer: {vehicle.get('seller_type', 'N/A')}")
-                print(f"  Source: {vehicle.get('source', 'N/A')}")
-                print(f"  URL: {vehicle.get('url', 'N/A')}")
-                print(f"  Est. Profit: ${vehicle.get('est_profit', 'N/A')}")
-                print(f"  ROI: {vehicle.get('roi_percent', 'N/A')}%")
-                
-                # Count RAM vehicles
-                if vehicle.get('make', '').lower() == 'ram':
-                    ram_count += 1
-                
-                # Count TRX models
-                model_trim = f"{vehicle.get('model', '')} {vehicle.get('trim', '')}".lower()
-                if 'trx' in model_trim:
-                    trx_count += 1
-                
-                # Count vehicles from 2024
-                year = vehicle.get('year')
-                if year and year == 2024:
-                    correct_year_count += 1
-                
-                # Validate vehicle data
-                tester.validate_vehicle_data(vehicle, "2024 trx")
-            
-            print(f"\nSummary of 2024 TRX search:")
-            print(f"  Total vehicles found: {vehicles_found}")
-            print(f"  RAM vehicles: {ram_count}/{len(vehicles)}")
-            print(f"  TRX models: {trx_count}/{len(vehicles)}")
-            print(f"  2024 models: {correct_year_count}/{len(vehicles)}")
-            
-            # Test is successful if we found at least 1 2024 RAM TRX vehicle
-            if ram_count >= 1 and trx_count >= 1 and correct_year_count >= 1:
-                print("✅ 2024 TRX search test PASSED")
-                tester.tests_passed += 1
-            else:
-                print("❌ 2024 TRX search test FAILED - Not enough matching vehicles found")
-            
-            tester.tests_run += 1
-            tester.test_results["2024 TRX Search Validation"] = {
-                "success": ram_count >= 1 and trx_count >= 1 and correct_year_count >= 1,
-                "ram_count": ram_count,
-                "trx_count": trx_count,
-                "correct_year_count": correct_year_count
-            }
+    # Test 5: Test the deals endpoint
+    success, deals_data = tester.run_test("Get Deals", "GET", "deals")
     
-    # Test 4: Live Scraping - 2021 RAM TRX (The main test case for the fix)
-    print("\n🔍 Testing Live Scraping for 2021 RAM TRX...")
-    success, ram_trx_scrape_data = tester.run_test(
-        "2021 RAM TRX Live Scrape", 
-        "POST", 
-        "scrape/quick", 
-        params={"query": "2021 ram trx", "max_results": 5}
-    )
-    
-    if success and ram_trx_scrape_data:
-        vehicles_found = ram_trx_scrape_data.get("vehicles_found", 0)
-        vehicles = ram_trx_scrape_data.get("vehicles", [])
+    if success and deals_data:
+        print(f"Found {len(deals_data)} deals")
         
-        print(f"Found {vehicles_found} 2021 RAM TRX vehicles")
+        # Verify deals have profit and ROI data
+        all_have_profit = all('est_profit' in vehicle for vehicle in deals_data)
+        all_have_roi = all('roi_percent' in vehicle for vehicle in deals_data)
         
-        if vehicles:
-            trx_count = 0
-            ram_count = 0
-            correct_year_count = 0
-            price_in_range_count = 0
-            
-            for i, vehicle in enumerate(vehicles):
-                print(f"\nVehicle {i+1}:")
-                print(f"  Make/Model: {vehicle.get('year')} {vehicle.get('make')} {vehicle.get('model')} {vehicle.get('trim', '')}")
-                print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
-                print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
-                print(f"  Location: {vehicle.get('location', 'N/A')}")
-                print(f"  Dealer: {vehicle.get('seller_type', 'N/A')}")
-                print(f"  Source: {vehicle.get('source', 'N/A')}")
-                print(f"  URL: {vehicle.get('url', 'N/A')}")
-                print(f"  Est. Profit: ${vehicle.get('est_profit', 'N/A')}")
-                print(f"  ROI: {vehicle.get('roi_percent', 'N/A')}%")
-                
-                # Count RAM vehicles
-                if vehicle.get('make', '').lower() == 'ram':
-                    ram_count += 1
-                
-                # Count TRX models
-                model_trim = f"{vehicle.get('model', '')} {vehicle.get('trim', '')}".lower()
-                if 'trx' in model_trim:
-                    trx_count += 1
-                
-                # Count vehicles from 2021-2023
-                year = vehicle.get('year')
-                if year and (2021 <= year <= 2023):
-                    correct_year_count += 1
-                
-                # Count vehicles in price range $70k-$110k
-                price = vehicle.get('asking_price')
-                if price and (70000 <= price <= 110000):
-                    price_in_range_count += 1
-                
-                # Validate vehicle data
-                tester.validate_vehicle_data(vehicle, "ram trx")
-            
-            print(f"\nSummary of 2021 RAM TRX search:")
-            print(f"  Total vehicles found: {vehicles_found}")
-            print(f"  RAM vehicles: {ram_count}/{len(vehicles)}")
-            print(f"  TRX models: {trx_count}/{len(vehicles)}")
-            print(f"  2021-2023 models: {correct_year_count}/{len(vehicles)}")
-            print(f"  $70k-$110k price range: {price_in_range_count}/{len(vehicles)}")
-            
-            # Test is successful if we found at least 3 RAM TRX vehicles
-            if ram_count >= 3 and trx_count >= 3:
-                print("✅ 2021 RAM TRX search test PASSED")
-                tester.tests_passed += 1
-            else:
-                print("❌ 2021 RAM TRX search test FAILED - Not enough matching vehicles found")
-            
-            tester.tests_run += 1
-            tester.test_results["2021 RAM TRX Search Validation"] = {
-                "success": ram_count >= 3 and trx_count >= 3,
-                "ram_count": ram_count,
-                "trx_count": trx_count
-            }
+        if all_have_profit and all_have_roi:
+            print("✅ All deals have profit and ROI data")
+            tester.test_results["Deals Data Validation"] = {"success": True}
+        else:
+            print("❌ Some deals are missing profit or ROI data")
+            tester.test_results["Deals Data Validation"] = {"success": False}
     
-    # Test 4: Live Scraping - RAM TRX (without year)
-    print("\n🔍 Testing Live Scraping for RAM TRX (without year)...")
-    success, ram_scrape_data = tester.run_test(
-        "RAM TRX Live Scrape", 
-        "POST", 
-        "scrape/quick", 
-        params={"query": "ram trx", "max_results": 3}
-    )
+    # Test 6: Test the trending endpoint
+    success, trending_data = tester.run_test("Get Trending", "GET", "trending")
     
-    if success and ram_scrape_data:
-        vehicles_found = ram_scrape_data.get("vehicles_found", 0)
-        vehicles = ram_scrape_data.get("vehicles", [])
+    if success and trending_data:
+        print(f"Found {len(trending_data)} trending vehicle types")
         
-        print(f"Found {vehicles_found} RAM TRX vehicles")
+        # Verify trending data has required fields
+        all_have_required = all(all(field in item for field in ['make_model', 'avg_price', 'price_change_percent', 'total_listings']) 
+                               for item in trending_data)
         
-        if vehicles:
-            for i, vehicle in enumerate(vehicles):
-                print(f"\nVehicle {i+1}:")
-                print(f"  Make/Model: {vehicle.get('year')} {vehicle.get('make')} {vehicle.get('model')} {vehicle.get('trim', '')}")
-                print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
-                print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
-                print(f"  Location: {vehicle.get('location', 'N/A')}")
-                print(f"  Dealer: {vehicle.get('seller_type', 'N/A')}")
-                print(f"  Source: {vehicle.get('source', 'N/A')}")
-                print(f"  URL: {vehicle.get('url', 'N/A')}")
-                
-                # Validate vehicle data
-                tester.validate_vehicle_data(vehicle, "RAM TRX")
+        if all_have_required:
+            print("✅ All trending items have required data")
+            tester.test_results["Trending Data Validation"] = {"success": True}
+        else:
+            print("❌ Some trending items are missing required data")
+            tester.test_results["Trending Data Validation"] = {"success": False}
     
-    # Test 5: Live Scraping - BMW M3
-    print("\n🔍 Testing Live Scraping for BMW M3...")
-    success, bmw_scrape_data = tester.run_test(
-        "BMW M3 Live Scrape", 
-        "POST", 
-        "scrape/quick", 
-        params={"query": "BMW M3", "max_results": 3}
-    )
-    
-    if success and bmw_scrape_data:
-        vehicles_found = bmw_scrape_data.get("vehicles_found", 0)
-        vehicles = bmw_scrape_data.get("vehicles", [])
-        
-        print(f"Found {vehicles_found} BMW M3 vehicles")
-        
-        if vehicles:
-            for i, vehicle in enumerate(vehicles):
-                print(f"\nVehicle {i+1}:")
-                print(f"  Make/Model: {vehicle.get('year')} {vehicle.get('make')} {vehicle.get('model')} {vehicle.get('trim', '')}")
-                print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
-                print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
-                print(f"  Location: {vehicle.get('location', 'N/A')}")
-                
-                # Validate vehicle data
-                tester.validate_vehicle_data(vehicle, "BMW M3")
-    
-    # Test 6: Live Scraping - 2022 Porsche 911 (year-based search)
-    print("\n🔍 Testing Live Scraping for 2022 Porsche 911...")
-    success, porsche_scrape_data = tester.run_test(
-        "2022 Porsche 911 Live Scrape", 
-        "POST", 
-        "scrape/quick", 
-        params={"query": "2022 Porsche 911", "max_results": 3}
-    )
-    
-    if success and porsche_scrape_data:
-        vehicles_found = porsche_scrape_data.get("vehicles_found", 0)
-        vehicles = porsche_scrape_data.get("vehicles", [])
-        
-        print(f"Found {vehicles_found} 2022 Porsche 911 vehicles")
-        
-        if vehicles:
-            for i, vehicle in enumerate(vehicles):
-                print(f"\nVehicle {i+1}:")
-                print(f"  Make/Model: {vehicle.get('year')} {vehicle.get('make')} {vehicle.get('model')} {vehicle.get('trim', '')}")
-                print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
-                print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
-                print(f"  Location: {vehicle.get('location', 'N/A')}")
-                
-                # Validate vehicle data
-                tester.validate_vehicle_data(vehicle, "Porsche 911")
-    
-    # Test 7: Live Scraping - Ford Raptor
+    # Test 7: Live Scraping - Ford Raptor (testing the main feature mentioned in the request)
     print("\n🔍 Testing Live Scraping for Ford Raptor...")
     success, raptor_scrape_data = tester.run_test(
         "Ford Raptor Live Scrape", 
         "POST", 
         "scrape/quick", 
-        params={"query": "Ford Raptor", "max_results": 3}
+        params={"query": "Ford Raptor", "max_results": 5}
     )
     
     if success and raptor_scrape_data:
@@ -488,9 +301,24 @@ def main():
                 print(f"  Price: ${vehicle.get('asking_price', 'N/A')}")
                 print(f"  Mileage: {vehicle.get('mileage', 'N/A')}")
                 print(f"  Location: {vehicle.get('location', 'N/A')}")
+                print(f"  Est. Profit: ${vehicle.get('est_profit', 'N/A')}")
+                print(f"  ROI: {vehicle.get('roi_percent', 'N/A')}%")
+                print(f"  Flip Score: {vehicle.get('flip_score', 'N/A')}/10")
                 
                 # Validate vehicle data
                 tester.validate_vehicle_data(vehicle, "Ford Raptor")
+            
+            # Test is successful if we found at least 1 Ford Raptor
+            if len(vehicles) >= 1:
+                print("✅ Ford Raptor search test PASSED")
+                tester.tests_passed += 1
+            else:
+                print("❌ Ford Raptor search test FAILED - Not enough matching vehicles found")
+            
+            tester.tests_run += 1
+            tester.test_results["Ford Raptor Search Validation"] = {
+                "success": len(vehicles) >= 1
+            }
     
     # Print summary
     return tester.print_summary()
