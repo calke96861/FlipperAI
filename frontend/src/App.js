@@ -367,6 +367,119 @@ function App() {
     }
   };
 
+  const handleScrapeComprehensive = async () => {
+    if (!searchQuery.trim()) return;
+
+    try {
+      setScrapingLoading(true);
+      setScrapingStatus("Scraping across all major platforms...");
+      
+      const response = await axios.post(`${API}/scrape/comprehensive`, null, {
+        params: {
+          query: searchQuery,
+          location: filters.zipCode || "",
+          max_results: 20
+        }
+      });
+      
+      setScrapingStatus(`Found ${response.data.vehicles_found} vehicles across ${Object.keys(response.data.source_results).length} platforms in ${response.data.duration.toFixed(1)}s`);
+      
+      if (response.data.vehicles && response.data.vehicles.length > 0) {
+        const scrapedVehicles = response.data.vehicles.map(v => ({
+          ...v,
+          seller_type: v.seller_type || 'unknown',
+          source: v.source || 'unknown',
+          status: v.status || 'new'
+        }));
+        setVehicles(scrapedVehicles);
+      } else {
+        setVehicles([]);
+      }
+      
+    } catch (error) {
+      console.error("Error with comprehensive scrape:", error);
+      setScrapingStatus("Comprehensive scraping failed. Please try again.");
+    } finally {
+      setScrapingLoading(false);
+      setTimeout(() => setScrapingStatus(null), 8000);
+    }
+  };
+
+  const handleScrapeEnthusiast = async () => {
+    if (!searchQuery.trim()) return;
+
+    try {
+      setScrapingLoading(true);
+      setScrapingStatus("Scraping auction and enthusiast platforms...");
+      
+      const response = await axios.post(`${API}/scrape/enthusiast`, null, {
+        params: {
+          query: searchQuery,
+          max_results: 15
+        }
+      });
+      
+      setScrapingStatus(`Found ${response.data.vehicles_found} vehicles on auction platforms in ${response.data.duration.toFixed(1)}s`);
+      
+      if (response.data.vehicles && response.data.vehicles.length > 0) {
+        const scrapedVehicles = response.data.vehicles.map(v => ({
+          ...v,
+          seller_type: v.seller_type || 'auction',
+          source: v.source || 'unknown',
+          status: v.status || 'new'
+        }));
+        setVehicles(scrapedVehicles);
+      } else {
+        setVehicles([]);
+      }
+      
+    } catch (error) {
+      console.error("Error with enthusiast scrape:", error);
+      setScrapingStatus("Enthusiast scraping failed. Please try again.");
+    } finally {
+      setScrapingLoading(false);
+      setTimeout(() => setScrapingStatus(null), 8000);
+    }
+  };
+
+  const handleScrapePrivateParty = async () => {
+    if (!searchQuery.trim()) return;
+
+    try {
+      setScrapingLoading(true);
+      setScrapingStatus("Scraping private party listings...");
+      
+      const response = await axios.post(`${API}/scrape/private-party`, null, {
+        params: {
+          query: searchQuery,
+          location: filters.zipCode || "",
+          max_results: 25
+        }
+      });
+      
+      setScrapingStatus(`Found ${response.data.vehicles_found} private party vehicles in ${response.data.duration.toFixed(1)}s`);
+      
+      if (response.data.vehicles && response.data.vehicles.length > 0) {
+        const scrapedVehicles = response.data.vehicles.map(v => ({
+          ...v,
+          seller_type: v.seller_type || 'private',
+          source: v.source || 'unknown',
+          status: v.status || 'new'
+        }));
+        setVehicles(scrapedVehicles);
+      } else {
+        setVehicles([]);
+      }
+      
+    } catch (error) {
+      console.error("Error with private party scrape:", error);
+      setScrapingStatus("Private party scraping failed. Please try again.");
+    } finally {
+      setScrapingLoading(false);
+      setTimeout(() => setScrapingStatus(null), 8000);
+    }
+  };
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
