@@ -282,108 +282,122 @@ function App() {
   };
 
   const VehicleCard = ({ vehicle }) => {
-    const profitColor = (vehicle.est_profit || 0) > 0 ? 'text-green-600' : 'text-red-600';
-    const roiColor = (vehicle.roi_percent || 0) > 0 ? 'text-green-600' : 'text-red-600';
+    const profitColor = (vehicle.est_profit || 0) > 0 ? 'text-secondary-600' : 'text-red-600';
+    const roiColor = (vehicle.roi_percent || 0) > 0 ? 'text-secondary-600' : 'text-red-600';
     const isSaved = savedVehicles.has(vehicle.id);
+    const isHotDeal = (vehicle.flip_score || 0) >= 5;
 
     return (
-      <div className={`bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow ${isSaved ? 'ring-2 ring-yellow-400' : ''}`}>
+      <div className={`card-elevated p-6 h-full flex flex-col ${isSaved ? 'ring-2 ring-yellow-400' : ''}`}>
+        {/* Header */}
         <div className="flex justify-between items-start mb-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">
+          <div className="flex-1">
+            <h3 className="heading-3 text-gray-900 mb-1">
               {vehicle.year} {vehicle.make} {vehicle.model}
             </h3>
             {vehicle.trim && (
-              <p className="text-sm text-gray-600">{vehicle.trim}</p>
+              <p className="body-small text-gray-600 mb-2">{vehicle.trim}</p>
             )}
-            <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-              <span className="flex items-center">
+            <div className="flex items-center space-x-4 text-gray-500">
+              <span className="flex items-center caption">
                 <Car className="h-4 w-4 mr-1" />
                 {vehicle.mileage ? vehicle.mileage.toLocaleString() : 'N/A'} mi
               </span>
-              <span className="flex items-center">
+              <span className="flex items-center caption">
                 <MapPin className="h-4 w-4 mr-1" />
                 {vehicle.location || 'Unknown'}
               </span>
             </div>
           </div>
-          <div className="text-right">
-            <div className="flex items-center space-x-1 mb-2">
-              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+          
+          <div className="flex flex-col items-end space-y-2">
+            <div className="flex items-center space-x-2">
+              <span className="pill pill-primary">
                 {vehicle.source ? vehicle.source.replace('_', '.') : 'unknown'}
               </span>
-              {(vehicle.flip_score || 0) >= 5 && (
-                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+              {isHotDeal && (
+                <span className="pill pill-danger">
                   🔥 Hot Deal
                 </span>
               )}
             </div>
-            <p className="text-xs text-gray-500">{vehicle.seller_type || 'unknown'}</p>
+            <p className="caption text-gray-500">{vehicle.seller_type || 'unknown'}</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <p className="text-sm text-gray-500">Asking Price</p>
-            <p className="text-xl font-bold text-gray-900">{formatCurrency(vehicle.asking_price || 0)}</p>
+        {/* Pricing */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="text-center p-4 bg-gray-50 rounded-xl">
+            <p className="caption text-gray-500 mb-1">Asking Price</p>
+            <p className="heading-3 text-gray-900">{formatCurrency(vehicle.asking_price || 0)}</p>
           </div>
-          <div>
-            <p className="text-sm text-gray-500">Market Value</p>
-            <p className="text-xl font-bold text-gray-700">{formatCurrency(vehicle.market_value || 0)}</p>
+          <div className="text-center p-4 bg-gray-50 rounded-xl">
+            <p className="caption text-gray-500 mb-1">Market Value</p>
+            <p className="heading-3 text-gray-700">{formatCurrency(vehicle.market_value || 0)}</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
-          <div className="text-center">
-            <p className="text-xs text-gray-500">Est. Profit</p>
-            <p className={`text-lg font-bold ${profitColor}`}>
+        {/* KPIs */}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="text-center p-3 bg-white border border-gray-200 rounded-lg">
+            <p className="caption text-gray-500 mb-1">Profit</p>
+            <p className={`body-base font-bold ${profitColor}`}>
               {formatCurrency(vehicle.est_profit || 0)}
             </p>
           </div>
-          <div className="text-center">
-            <p className="text-xs text-gray-500">ROI</p>
-            <p className={`text-lg font-bold ${roiColor}`}>
+          <div className="text-center p-3 bg-white border border-gray-200 rounded-lg">
+            <p className="caption text-gray-500 mb-1">ROI</p>
+            <p className={`body-base font-bold ${roiColor}`}>
               {formatPercent(vehicle.roi_percent || 0)}
             </p>
           </div>
-          <div className="text-center">
-            <p className="text-xs text-gray-500">Flip Score</p>
-            <div className="flex items-center justify-center">
-              <p className="text-lg font-bold text-blue-600">{vehicle.flip_score || 0}/10</p>
-              {(vehicle.flip_score || 0) >= 7 && <span className="ml-1 text-red-500">🔥</span>}
+          <div className="text-center p-3 bg-white border border-gray-200 rounded-lg">
+            <p className="caption text-gray-500 mb-1">Score</p>
+            <div className="flex items-center justify-center space-x-1">
+              <p className="body-base font-bold text-primary-600">{vehicle.flip_score || 0}/10</p>
+              {(vehicle.flip_score || 0) >= 7 && <span className="text-red-500">🔥</span>}
             </div>
           </div>
         </div>
 
-        <div className="flex justify-between items-center">
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(vehicle.status)}`}>
+        {/* Actions */}
+        <div className="flex justify-between items-center mt-auto pt-4 border-t border-gray-200">
+          <span className={`pill ${getStatusColor(vehicle.status)}`}>
             {(vehicle.status || 'new').replace('_', ' ')}
           </span>
-          <div className="flex space-x-2">
+          
+          <div className="flex items-center space-x-2">
             <button
               onClick={() => toggleSaveVehicle(vehicle.id)}
-              className={`p-2 ${isSaved ? 'text-yellow-600' : 'text-gray-400'} hover:text-yellow-600 transition-colors`}
+              className={`p-2 rounded-lg transition-colors ${
+                isSaved 
+                  ? 'text-yellow-600 bg-yellow-50 hover:bg-yellow-100' 
+                  : 'text-gray-400 hover:text-yellow-600 hover:bg-yellow-50'
+              }`}
               title={isSaved ? "Remove from Saved" : "Save Vehicle"}
             >
               {isSaved ? <CheckCircle className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
+            
             <button
               onClick={() => updateVehicleStatus(vehicle.id, 'watching')}
-              className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+              className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
               title="Watch"
             >
               <Eye className="h-4 w-4" />
             </button>
+            
             <button
               onClick={() => updateVehicleStatus(vehicle.id, 'contacted')}
-              className="p-2 text-gray-400 hover:text-green-600 transition-colors"
+              className="p-2 text-gray-400 hover:text-secondary-600 hover:bg-secondary-50 rounded-lg transition-colors"
               title="Contact"
             >
               <MessageCircle className="h-4 w-4" />
             </button>
+            
             <button
               onClick={() => window.open(vehicle.url, '_blank')}
-              className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+              className="btn-primary py-2 px-4 body-small"
             >
               View Listing
             </button>
