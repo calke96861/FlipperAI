@@ -105,6 +105,7 @@ class ScrapingJobCreate(BaseModel):
     location: Optional[str] = ""
     max_results_per_source: Optional[int] = 20
     sources: Optional[List[Source]] = None
+    source_categories: Optional[List[str]] = None  # New field for category-based scraping
 
 class ScrapingJobResponse(BaseModel):
     job_id: str
@@ -113,6 +114,7 @@ class ScrapingJobResponse(BaseModel):
     vehicles_found: Optional[int] = None
     duration: Optional[float] = None
     source_results: Optional[Dict[str, int]] = None
+    categories_used: Optional[List[str]] = None
 
 # Helper Functions
 def process_scraped_vehicle(vehicle_data):
